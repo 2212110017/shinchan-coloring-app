@@ -15,10 +15,10 @@ const characters = [
     challengeComponent: 'ShinchanColoring', 
     
     // ゲット前のカード画像（未解禁時の「？」画像）
-    lockedImageUrl: '../assets/cards/locked.png', 
+    lockedImageUrl: 'assets/cards/locked.png', 
     
     // ゲット後のカード画像（コレクション表示用）
-    unlockedImageUrl: '../assets/cards/sinchan_card.png', 
+    unlockedImageUrl: 'assets/cards/sinchan_card.png', 
     description: 'キレイなおねいさんと「アクション仮面」が大好き。色んな人を巻き込んでは、騒動を巻き起こすことも。ひたすらお気楽マイペースな嵐を呼ぶ５歳児！'
   },
 
