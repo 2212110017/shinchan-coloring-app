@@ -29,8 +29,8 @@ const useIsMobile = (maxWidth = 768) => {
 
 
 // 💡 画像パスの定義 (変更なし)
-const SHINCHAN_BACKGROUND_IMAGE_URL = '/assets/cards/sinchan_bg.png';
-const WOOD_PALETTE_IMAGE_URL = '/assets/cards/wood_texture.jpg'; 
+const SHINCHAN_BACKGROUND_IMAGE_URL = 'assets/cards/sinchan_bg.png';
+const WOOD_PALETTE_IMAGE_URL = 'assets/cards/wood_texture.jpg'; 
 
 
 // ----------------------------------------------

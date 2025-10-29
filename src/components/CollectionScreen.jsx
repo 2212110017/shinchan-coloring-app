@@ -24,9 +24,9 @@ const useIsMobile = (maxWidth = 768) => {
 };
 
 // 画像パスの定義 (変更なし)
-const UNLOCKED_CARD_DEFAULT_IMAGE = '/assets/cards/default_unlocked.png'; 
-const LOCKED_CARD_IMAGE = '/assets/cards/locked.png'; 
-const SHINCHAN_BACKGROUND_IMAGE = '/assets/cards/sinchan_bg.png';// 背景画像パス
+const UNLOCKED_CARD_DEFAULT_IMAGE = 'assets/cards/default_unlocked.png'; 
+const LOCKED_CARD_IMAGE = 'assets/cards/locked.png'; 
+const SHINCHAN_BACKGROUND_IMAGE = 'assets/cards/sinchan_bg.png';// 背景画像パス
 
 // レアリティの表示マップとスタイル定義 (変更なし)
 const RARITY_DISPLAY_MAP = {
