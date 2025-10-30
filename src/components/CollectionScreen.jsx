@@ -340,9 +340,6 @@ const CollectionScreen = ({ onStartChallenge }) => {
 
 
 
-export default CollectionScreen;
-
-
 // --- スタイル定義 (isMobileに依存しないもののみ残す) ---
 
 const titleBoxStyle = {
@@ -506,3 +503,5 @@ const cardDetailButtonContainerStyle = {
     marginTop: '20px',
     width: '100%',
 };
+
+export default CollectionScreen;
