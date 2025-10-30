@@ -139,15 +139,9 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
 const CollectionScreen = ({ onStartChallenge }) => {
-    // ✅ 修正点: コレクションIDリストを取得し、その変更がトリガーとなるように明示
-    //           これにより、App.jsxで unlockCard が呼ばれた瞬間にここが再レンダリングされる。
-    const collectedIds = useCollectionStore(state => state.collectedCharacterIds);
-    
-    // isCardUnlocked 関数は、collectedIdsに依存するため、以下のように取得するのが最もクリーン
-    const isCardUnlocked = (characterId) => collectedIds.includes(characterId);
-    
+    const { isCardUnlocked } = useCollectionStore(); 
     const [selectedCharacter, setSelectedCharacter] = useState(null); 
-    const [detailedCharacter, setDetailedCharacter] = useState(null);
+    const [detailedCharacter, setDetailedCharacter] = useState(null); 
     
     // 💡 画面サイズを監視する
     const isMobile = useIsMobile(); 
@@ -340,6 +334,9 @@ const CollectionScreen = ({ onStartChallenge }) => {
 
 
 
+export default CollectionScreen;
+
+
 // --- スタイル定義 (isMobileに依存しないもののみ残す) ---
 
 const titleBoxStyle = {
@@ -503,5 +500,3 @@ const cardDetailButtonContainerStyle = {
     marginTop: '20px',
     width: '100%',
 };
-
-export default CollectionScreen;
