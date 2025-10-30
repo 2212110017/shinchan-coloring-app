@@ -283,7 +283,7 @@ const getColorName = (colorCode) => {
                 <h2 style={titleStyle}> 【{characterInfo.name}】 塗り絵ゲットチャレンジ</h2>
 
                 <p style={currentColorTextStyle}>
-                    現在選択中の色： 
+                    現在選択中の色 
                     {/* 💡 修正箇所：isMobileの時だけ改行を挿入 */}
                     {isMobile && <br />} 
                     <strong style={{ 
