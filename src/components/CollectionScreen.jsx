@@ -139,9 +139,12 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
 const CollectionScreen = ({ onStartChallenge }) => {
-    const { isCardUnlocked } = useCollectionStore(); 
-    const [selectedCharacter, setSelectedCharacter] = useState(null); 
-    const [detailedCharacter, setDetailedCharacter] = useState(null); 
+    const collectedIds = useCollectionStore(state => state.collectedCharacterIds);
+    
+    // isCardUnlocked 関数を、この collectedIds を使ってコンポーネント内で定義し直す
+    const isCardUnlocked = (characterId) => collectedIds.includes(characterId);
+    
+    const [selectedCharacter, setSelectedCharacter] = useState(null);
     
     // 💡 画面サイズを監視する
     const isMobile = useIsMobile(); 
