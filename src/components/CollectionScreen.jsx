@@ -1,11 +1,11 @@
-// src/components/CollectionScreen.jsx
+// src/components/CollectionScreen.jsx の全コード
 
 import React, { useState, useEffect } from 'react';
 import characters from '../data/characters'; 
 import { useCollectionStore } from '../hooks/useCollectionStore'; 
 
 // ----------------------------------------------
-// 画面幅を監視するカスタムフック
+// 画面幅を監視するカスタムフック (変更なし)
 // ----------------------------------------------
 const useIsMobile = (maxWidth = 768) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= maxWidth);
@@ -57,6 +57,7 @@ const RARITY_STYLES = {
 
 // --- ChallengeModal コンポーネント (ポップアップ) --- (変更なし)
 const ChallengeModal = ({ character, onConfirm, onCancel }) => {
+    // スタイルが外部にあるため、ここでは省略
     return (
         <div style={modalOverlayStyle}>
             <div style={modalContentStyle}>
@@ -87,6 +88,7 @@ const ChallengeModal = ({ character, onConfirm, onCancel }) => {
 
 // --- カード詳細モーダルコンポーネント --- (変更なし)
 const CardDetailModal = ({ character, onClose, onReChallenge }) => {
+    // スタイルが外部にあるため、ここでは省略
     const displayRarity = RARITY_DISPLAY_MAP[character.rarity] || character.rarity;
     const rarityStyle = RARITY_STYLES[character.rarity] || {};
     const badgeBgColor = rarityStyle.borderColor || '#ccc';
@@ -138,10 +140,16 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
-const CollectionScreen = ({ onStartChallenge }) => {
-    const { isCardUnlocked } = useCollectionStore(); 
+// ✅ App.jsxから onAddToCollection をプロップスとして受け取る
+const CollectionScreen = ({ onStartChallenge, onAddToCollection }) => {
+    
+    // ✅ 修正点: コレクションIDリストを取得し、その変更がトリガーとなるように明示
+    //           これにより、onAddToCollectionが呼ばれた瞬間にここが再レンダリングされます。
+    const collectedIds = useCollectionStore(state => state.collectedCharacterIds);
+    const isCardUnlocked = (characterId) => collectedIds.includes(characterId);
+    
     const [selectedCharacter, setSelectedCharacter] = useState(null); 
-    const [detailedCharacter, setDetailedCharacter] = useState(null); 
+    const [detailedCharacter, setDetailedCharacter] = useState(null);
     
     // 💡 画面サイズを監視する
     const isMobile = useIsMobile(); 
