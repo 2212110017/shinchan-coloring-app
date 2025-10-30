@@ -5,6 +5,30 @@ import characters from '../data/characters';
 import { useCollectionStore } from '../hooks/useCollectionStore'; 
 
 // ----------------------------------------------
+// 🏅 ランク定義 (App.jsxと同期)
+// ----------------------------------------------
+const RANK_TIERS = [
+    { clears: 30, stars: 4, color: '#FF1493', name: 'レジェンド' }, // ピンク (100回)
+    { clears: 25, stars: 4, color: '#00B894', name: 'マスター' }, // 緑 (50回)
+    { clears: 20, stars: 4, color: '#FFC107', name: 'ベテラン' }, // 金色 (30回)
+    { clears: 15, stars: 3, color: '#FFC107', name: '上級者' },
+    { clears: 10, stars: 2, color: '#FFC107', name: '中級者' },
+    { clears: 5, stars: 1, color: '#FFC107', name: '初級者' },
+];
+
+// クリア回数に基づいて現在のランク情報を計算する関数
+const getCurrentRank = (clearCount) => {
+    if (clearCount < 3) { // 初級者ランクの回数に合わせる
+        return { stars: 0, color: '#ccc', name: '未到達' };
+    }
+    const sortedTiers = [...RANK_TIERS].sort((a, b) => b.clears - a.clears);
+    
+    // 現在のランクを見つける
+    return sortedTiers.find(tier => clearCount >= tier.clears) || { stars: 0, color: '#ccc', name: '未到達' };
+};
+
+
+// ----------------------------------------------
 // 画面幅を監視するカスタムフック
 // ----------------------------------------------
 const useIsMobile = (maxWidth = 768) => {
@@ -172,9 +196,9 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
         display: 'grid',
         // 🚨 修正箇所: スマホでは4列 (必要に応じて 'repeat(5, 1fr)' に変更も可能)
         gridTemplateColumns: isMobile 
-            ? 'repeat(4, 1fr)' 
+            ? 'repeat(3, 1fr)' 
             : 'repeat(auto-fit, minmax(150px, 1fr))', 
-        gap: isMobile ? '8px' : '20px', // スマホでは隙間を小さくしてカードを詰める
+        gap: isMobile ? '10px' : '20px', // スマホでは隙間を小さくしてカードを詰める
         maxWidth: isMobile ? '98%' : '900px', // スマホでは最大幅を増やして左右の余白を減らす
         margin: '0 auto',
         padding: '10px', // スマホではパディングを減らす
@@ -207,6 +231,18 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
         marginBottom: '30px', 
         transform: 'skewX(-5deg)',
         fontFamily: '"Mochiy Pop One", "Comic Sans MS", cursive, sans-serif',
+    };
+    
+    // ⭐️ 新規追加: 星バッジの動的なスタイル
+    const starBadgeStyle = {
+        position: 'absolute',
+        top: '5px', // カードの上端から少し内側
+        left: '5px', // カードの左端から少し内側
+        zIndex: 10, // 画像や他のバッジの上
+        fontSize: isMobile ? '1.2rem' : '1.5rem',
+        fontWeight: 'bold',
+        // 🚨 修正: 影をつけて、背景と対比させる。
+        textShadow: '0 0 4px #000, 0 0 4px #000', 
     };
     
     
@@ -250,6 +286,11 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
                     const imageUrl = isUnlocked ? character.unlockedImageUrl : character.lockedImageUrl;
                     const displayName = character.name; 
                     
+                    // ✅ クリア回数を取得 (unlockedCards は collectionMap です)
+                    const clearCount = unlockedCards[character.id] || 0;
+                    // ✅ ランク情報を取得
+                    const rankInfo = getCurrentRank(clearCount);
+
                     const rarityStyle = RARITY_STYLES[character.rarity] || {};
                     const displayRarity = RARITY_DISPLAY_MAP[character.rarity] || character.rarity;
 
@@ -284,6 +325,23 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
                             style={cardStyle} 
                             onClick={() => handleCardClick(character)}
                         >
+                            
+                            {/* ⭐️ 修正点 3: 星ランクの表示ロジックを修正 ⭐️ */}
+                            {isUnlocked && rankInfo.stars > 0 && (
+                                <span 
+                                    // 🚨 修正: ランク色を直接 color プロパティに適用し、記号を ★ に変更
+                                    style={{ 
+                                        ...starBadgeStyle, 
+                                        color: rankInfo.color, // ランクに応じた色を適用
+                                        // 影を付けて視認性を高める
+                                    }} 
+                                    title={`${clearCount}回クリア！${rankInfo.name}ランクです`}
+                                >
+                                    {/* 🚨 修正: 絵文字 '⭐' ではなく、記号 '★' を使用 */}
+                                    {'★'.repeat(rankInfo.stars)}
+                                </span>
+                            )}
+
                             <img 
                                 src={imageUrl} 
                                 alt={isUnlocked ? character.name : '未解禁'} 
@@ -499,4 +557,3 @@ const cardDetailButtonContainerStyle = {
     marginTop: '20px',
     width: '100%',
 };
-
