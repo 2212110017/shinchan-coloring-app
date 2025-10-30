@@ -277,7 +277,7 @@ const CollectionScreen = ({ onStartChallenge }) => {
                         fontWeight: 'bold',
                     };
                     
-                    const nameFontSize = isMobile ? '0.9rem' : '1.1rem'; // スマホで名前も小さく
+                    const nameFontSize = isMobile ? '0.7rem' : '1.1rem'; // スマホで名前も小さく
 
                     return (
                         <div 
