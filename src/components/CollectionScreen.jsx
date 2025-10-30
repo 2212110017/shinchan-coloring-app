@@ -56,7 +56,6 @@ const RARITY_STYLES = {
 };
 
 // --- モーダル共通スタイル定義 (CollectionScreen内で使用) ---
-// ChallengeModal, CardDetailModalが参照するためのスタイルを再定義
 const modalOverlayStyle = {
     position: 'fixed',
     top: 0,
@@ -96,38 +95,6 @@ const modalButtonStyle = {
     transition: 'background-color 0.2s',
 };
 
-// --- ChallengeModal コンポーネント (ポップアップ) --- 
-const ChallengeModal = ({ character, onConfirm, onCancel }) => {
-    // スタイルは外部の const を参照
-    return (
-        <div style={modalOverlayStyle}>
-            <div style={modalContentStyle}>
-                <h3 style={{ marginBottom: '20px' }}>
-                    このカードのゲットチャレンジに挑戦しますか？
-                </h3>
-                <p style={{ marginBottom: '30px', fontWeight: 'bold' }}>
-                    キャラクター: {character.name}
-                </p>
-                <div style={modalButtonContainerStyle}>
-                    <button 
-                        onClick={() => onConfirm(character.id)}
-                        style={{ ...modalButtonStyle, backgroundColor: '#d9534f', marginRight: '10px' }}
-                    >
-                        はい（挑戦する）
-                    </button>
-                    <button 
-                        onClick={onCancel}
-                        style={{ ...modalButtonStyle, backgroundColor: '#428bca' }}
-                    >
-                        いいえ（戻る）
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// --- カード詳細モーダルコンポーネント --- 
 const cardDetailModalContentStyle = {
     maxWidth: '500px',
     padding: '20px',
@@ -180,8 +147,39 @@ const cardDetailButtonContainerStyle = {
     width: '100%',
 };
 
+
+// --- ChallengeModal コンポーネント (ポップアップ) --- 
+const ChallengeModal = ({ character, onConfirm, onCancel }) => {
+    return (
+        <div style={modalOverlayStyle}>
+            <div style={modalContentStyle}>
+                <h3 style={{ marginBottom: '20px' }}>
+                    このカードのゲットチャレンジに挑戦しますか？
+                </h3>
+                <p style={{ marginBottom: '30px', fontWeight: 'bold' }}>
+                    キャラクター: {character.name}
+                </p>
+                <div style={modalButtonContainerStyle}>
+                    <button 
+                        onClick={() => onConfirm(character.id)}
+                        style={{ ...modalButtonStyle, backgroundColor: '#d9534f', marginRight: '10px' }}
+                    >
+                        はい（挑戦する）
+                    </button>
+                    <button 
+                        onClick={onCancel}
+                        style={{ ...modalButtonStyle, backgroundColor: '#428bca' }}
+                    >
+                        いいえ（戻る）
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- カード詳細モーダルコンポーネント --- 
 const CardDetailModal = ({ character, onClose, onReChallenge }) => {
-    // スタイルは外部の const を参照
     const displayRarity = RARITY_DISPLAY_MAP[character.rarity] || character.rarity;
     const rarityStyle = RARITY_STYLES[character.rarity] || {};
     const badgeBgColor = rarityStyle.borderColor || '#ccc';
@@ -234,10 +232,10 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
 const CollectionScreen = ({ onStartChallenge }) => {
-    // ✅ 修正点: コレクションIDリストを取得し、その変更がトリガーとなるように明示
+    
+    // ✅ 修正点: isCardUnlocked 関数をStoreから直接取得し、Storeの変更がトリガーとなるようにフックに伝える
     //           これにより、App.jsxで unlockCard が呼ばれた瞬間にここが再レンダリングされる。
-    const collectedIds = useCollectionStore(state => state.collectedCharacterIds);
-    const isCardUnlocked = (characterId) => collectedIds.includes(characterId);
+    const isCardUnlocked = useCollectionStore(state => state.isCardUnlocked);
     
     const [selectedCharacter, setSelectedCharacter] = useState(null); 
     const [detailedCharacter, setDetailedCharacter] = useState(null);
@@ -270,14 +268,13 @@ const CollectionScreen = ({ onStartChallenge }) => {
     // カード一覧グリッドの動的なスタイル
     const cardGridDynamicStyle = {
         display: 'grid',
-        // 🚨 修正箇所: スマホでは4列 (必要に応じて 'repeat(5, 1fr)' に変更も可能)
         gridTemplateColumns: isMobile 
             ? 'repeat(4, 1fr)' 
             : 'repeat(auto-fit, minmax(150px, 1fr))', 
-        gap: isMobile ? '8px' : '20px', // スマホでは隙間を小さくしてカードを詰める
-        maxWidth: isMobile ? '98%' : '900px', // スマホでは最大幅を増やして左右の余白を減らす
+        gap: isMobile ? '8px' : '20px', 
+        maxWidth: isMobile ? '98%' : '900px', 
         margin: '0 auto',
-        padding: '10px', // スマホではパディングを減らす
+        padding: '10px', 
         backgroundColor: 'rgba(255, 255, 255, 0.8)', 
         borderRadius: '15px',
         boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
@@ -286,7 +283,7 @@ const CollectionScreen = ({ onStartChallenge }) => {
     // 画面全体のコンテナの動的なスタイル
     const screenContainerDynamicStyle = {
         textAlign: 'center',
-        padding: isMobile ? '30px 5px' : '100px 300px', // スマホではパディングをさらに減らす
+        padding: isMobile ? '30px 5px' : '100px 300px', 
         minHeight: '100vh',
         backgroundImage: `url(${SHINCHAN_BACKGROUND_IMAGE})`,
         backgroundSize: 'cover',
@@ -300,7 +297,6 @@ const CollectionScreen = ({ onStartChallenge }) => {
             4px 4px 0 #000 
         `,
         color: 'white', 
-        // スマホでは '1.5rem'、PCでは '4rem' に
         fontSize: isMobile ? '1.5rem' : '4rem', 
         fontWeight: '900', 
         letterSpacing: '5px', 
@@ -313,7 +309,6 @@ const CollectionScreen = ({ onStartChallenge }) => {
     return (
         <div style={screenContainerDynamicStyle}>
             <div style={titleBoxStyle}>
-                {/* 🎯 修正: titleDynamicStyle を適用 */}
                 <h1 style={titleDynamicStyle}>
                 <span style={{ color: '#E0002A' }}>ク</span>
                 <span style={{ color: '#43B133' }}>レ</span>
@@ -346,6 +341,7 @@ const CollectionScreen = ({ onStartChallenge }) => {
             {/* カード一覧グリッド */}
             <div style={cardGridDynamicStyle}>
                 {characters.map(character => {
+                    // isCardUnlocked 関数をフックから取得
                     const isUnlocked = isCardUnlocked(character.id);
                     const imageUrl = isUnlocked ? character.unlockedImageUrl : character.lockedImageUrl;
                     const displayName = character.name; 
@@ -355,7 +351,6 @@ const CollectionScreen = ({ onStartChallenge }) => {
 
                     const cardStyle = {
                         ...baseCardStyle,
-                        // 🚨 修正: スマホのminHeightを小さくしてカードサイズを調整
                         minHeight: isMobile ? '180px' : '220px', 
                         cursor: 'pointer', 
                         ...(isUnlocked ? rarityStyle : {}), 
@@ -372,11 +367,11 @@ const CollectionScreen = ({ onStartChallenge }) => {
                         color: rarityStyle.borderColor ? '#333' : 'white', 
                         padding: '3px 8px',
                         borderRadius: '10px',
-                        fontSize: isMobile ? '0.6rem' : '0.7rem', // スマホでは文字も小さく
+                        fontSize: isMobile ? '0.6rem' : '0.7rem', 
                         fontWeight: 'bold',
                     };
                     
-                    const nameFontSize = isMobile ? '0.9rem' : '1.1rem'; // スマホで名前も小さく
+                    const nameFontSize = isMobile ? '0.9rem' : '1.1rem'; 
 
                     return (
                         <div 
@@ -470,7 +465,6 @@ const baseCardStyle = {
     display: 'flex', 
     flexDirection: 'column',
     justifyContent: 'space-between',
-    // minHeight は動的スタイルに移動
     
     '&:hover': {
         transform: 'translateY(-2px)',
@@ -490,7 +484,6 @@ const imageStyle = {
 };
 
 const nameStyle = {
-    // fontSize は動的スタイルに移動
     fontWeight: 'bold',
     color: '#333',
     marginTop: 'auto', 

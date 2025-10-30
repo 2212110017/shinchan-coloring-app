@@ -7,7 +7,6 @@ import ColoringChallenge from './components/ColoringChallenge';
 
 // キャラクターデータと初期 ID のインポート
 import characters from './data/characters';
-// const INITIAL_CHALLENGE_ID = characters[0].id; // 最初のチャレンジはしんちゃん
 
 
 // --- SuccessModal コンポーネント定義（App.jsx内で完結） ---
@@ -90,7 +89,7 @@ const App = () => {
 
     // コレクションに追加する処理 (勝利モーダルから呼ばれる)
     const handleAddToCollection = (characterId) => {
-        // ✅ 修正点: コレクションの状態を更新（CollectionScreenがこの変更を検知する）
+        // コレクションの状態を更新（CollectionScreenがこの変更を検知する）
         unlockCard(characterId); 
         
         setShowSuccessModal(false);
