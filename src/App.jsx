@@ -1,11 +1,11 @@
-// src/App.jsx
+// src/App.jsx の全コード（最終修正版）
 
 import React, { useState } from 'react';
 import CollectionScreen from './components/CollectionScreen';
 import ColoringChallenge from './components/ColoringChallenge'; 
 
 import characters from './data/characters';
-import { useCollectionStore } from './hooks/useCollectionStore';
+import { useCollectionStore } from './hooks/useCollectionStore'; // 👈 カスタムフックを使用
 
 const APP_BACKGROUND_IMAGE_URL = 'assets/shinchan_bg.png';
 
@@ -102,7 +102,6 @@ const SuccessModal = ({ character, onAddToCollection, onDiscardAndReturn }) => {
 
                 <div style={buttonContainerStyle}>
                     <button 
-                        // 🎯 修正: App.jsx側でIDが確定しているので、ここでは引数なしで実行する
                         onClick={onAddToCollection} 
                         style={confirmButtonStyle}
                     >
@@ -148,7 +147,9 @@ const collectionAppStyle = {
 
 
 function App() {
-  const { unlockCard } = useCollectionStore(); 
+  // 🏅 最重要修正: useCollectionStore から必要な状態と関数をすべて取得する
+  const { unlockCard, isCardUnlocked, unlockedCards } = useCollectionStore(); 
+    
   const [currentChallengeId, setCurrentChallengeId] = useState(null); 
   
   // 🏅 State の定義
@@ -200,6 +201,9 @@ function App() {
       {!currentChallengeId && (
         <CollectionScreen 
           onStartChallenge={setCurrentChallengeId} 
+          // ✅ 最重要修正: CollectionScreen に最新の状態をPropsとして渡す
+          isCardUnlocked={isCardUnlocked} 
+          unlockedCards={unlockedCards}
         />
       )}
       
@@ -207,7 +211,7 @@ function App() {
       {showSuccessModal && unlockedCharacter && (
         <SuccessModal 
           character={unlockedCharacter}
-          // 🚨 最重要修正: IDを確定させて、モーダルに渡す
+          // IDを確定させて、モーダルに渡す
           onAddToCollection={() => handleAddToCollection(unlockedCharacter.id)}
           onDiscardAndReturn={returnToCollection} 
         />

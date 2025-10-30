@@ -138,8 +138,7 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
-const CollectionScreen = ({ onStartChallenge }) => {
-    const { isCardUnlocked } = useCollectionStore(); 
+const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) => {
     const [selectedCharacter, setSelectedCharacter] = useState(null); 
     const [detailedCharacter, setDetailedCharacter] = useState(null); 
     
