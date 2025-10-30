@@ -1,4 +1,4 @@
-// src/App.jsx の修正（SuccessModalをApp.jsx内に定義）
+// src/App.jsx の全コード
 
 import { useState } from 'react';
 import { useCollectionStore } from './hooks/useCollectionStore'; 
@@ -7,14 +7,13 @@ import ColoringChallenge from './components/ColoringChallenge';
 
 // キャラクターデータと初期 ID のインポート
 import characters from './data/characters';
-const INITIAL_CHALLENGE_ID = characters[0].id; // 最初のチャレンジはしんちゃん
+// const INITIAL_CHALLENGE_ID = characters[0].id; // 最初のチャレンジはしんちゃん
 
 
-// --- SuccessModal コンポーネント定義 ---
-// 以前App.jsxにあったものを再定義（スタイルは仮置き）
+// --- SuccessModal コンポーネント定義（App.jsx内で完結） ---
 const SuccessModal = ({ character, onAddToCollection, onCancel }) => {
     
-    // スタイル定義 (App.jsx内で定義されているか、グローバルにアクセスできる前提)
+    // スタイル定義をコンポーネント内に配置し、参照エラーを完全に回避
     const modalOverlayStyle = {
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
         backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', 
@@ -74,7 +73,7 @@ const App = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [lastUnlockedCardId, setLastUnlockedCardId] = useState(null);
 
-    // コレクションストアからカード解除関数を取得
+    // コレクションストアからカード解除関数を取得 (Appコンポーネントが直接コレクションを更新するため)
     const unlockCard = useCollectionStore(state => state.unlockCard);
 
     // チャレンジ開始
@@ -91,7 +90,7 @@ const App = () => {
 
     // コレクションに追加する処理 (勝利モーダルから呼ばれる)
     const handleAddToCollection = (characterId) => {
-        // ✅ コレクションの状態を更新
+        // ✅ 修正点: コレクションの状態を更新（CollectionScreenがこの変更を検知する）
         unlockCard(characterId); 
         
         setShowSuccessModal(false);
@@ -117,8 +116,6 @@ const App = () => {
                 // コレクション画面の表示
                 <CollectionScreen 
                     onStartChallenge={handleStartChallenge}
-                    // ✅ コレクション追加ロジックは CollectionScreenには不要（Appが勝利モーダルを出すため）
-                    // onAddToCollection={handleAddToCollection} 
                 />
             )}
 

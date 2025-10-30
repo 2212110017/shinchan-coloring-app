@@ -55,9 +55,50 @@ const RARITY_STYLES = {
     },
 };
 
-// --- ChallengeModal コンポーネント (ポップアップ) --- (変更なし)
+// --- モーダル共通スタイル定義 (CollectionScreen内で使用) ---
+// ChallengeModal, CardDetailModalが参照するためのスタイルを再定義
+const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+};
+
+const modalContentStyle = {
+    backgroundColor: 'white',
+    padding: '30px',
+    borderRadius: '10px',
+    width: '90%',
+    maxWidth: '400px',
+    textAlign: 'center',
+    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
+};
+
+const modalButtonContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '20px',
+};
+
+const modalButtonStyle = {
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px',
+    color: 'white',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+};
+
+// --- ChallengeModal コンポーネント (ポップアップ) --- 
 const ChallengeModal = ({ character, onConfirm, onCancel }) => {
-    // スタイルが外部にあるため、ここでは省略
+    // スタイルは外部の const を参照
     return (
         <div style={modalOverlayStyle}>
             <div style={modalContentStyle}>
@@ -86,9 +127,61 @@ const ChallengeModal = ({ character, onConfirm, onCancel }) => {
     );
 };
 
-// --- カード詳細モーダルコンポーネント --- (変更なし)
+// --- カード詳細モーダルコンポーネント --- 
+const cardDetailModalContentStyle = {
+    maxWidth: '500px',
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+};
+
+const cardDetailHeaderStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: '15px',
+    gap: '10px', 
+};
+
+const cardDetailRarityBadgeStyle = {
+    padding: '5px 10px',
+    borderRadius: '15px',
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
+    color: '#333', 
+};
+
+const cardDetailImageStyle = {
+    width: '150px',
+    height: 'auto',
+    borderRadius: '10px',
+    marginBottom: '15px',
+    border: '2px solid #eee',
+};
+
+const cardDetailDescriptionStyle = {
+    fontSize: '0.95rem',
+    color: '#555',
+    lineHeight: '1.6',
+    marginBottom: '10px',
+    textAlign: 'left', 
+    width: '100%',
+    maxHeight: '150px', 
+    overflowY: 'auto', 
+    padding: '0 10px',
+};
+
+const cardDetailButtonContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '20px',
+    width: '100%',
+};
+
 const CardDetailModal = ({ character, onClose, onReChallenge }) => {
-    // スタイルが外部にあるため、ここでは省略
+    // スタイルは外部の const を参照
     const displayRarity = RARITY_DISPLAY_MAP[character.rarity] || character.rarity;
     const rarityStyle = RARITY_STYLES[character.rarity] || {};
     const badgeBgColor = rarityStyle.borderColor || '#ccc';
@@ -140,11 +233,9 @@ const CardDetailModal = ({ character, onClose, onReChallenge }) => {
 
 
 // --- CollectionScreen コンポーネント (メイン画面) ---
-// ✅ App.jsxから onAddToCollection をプロップスとして受け取る
-const CollectionScreen = ({ onStartChallenge, onAddToCollection }) => {
-    
+const CollectionScreen = ({ onStartChallenge }) => {
     // ✅ 修正点: コレクションIDリストを取得し、その変更がトリガーとなるように明示
-    //           これにより、onAddToCollectionが呼ばれた瞬間にここが再レンダリングされます。
+    //           これにより、App.jsxで unlockCard が呼ばれた瞬間にここが再レンダリングされる。
     const collectedIds = useCollectionStore(state => state.collectedCharacterIds);
     const isCardUnlocked = (characterId) => collectedIds.includes(characterId);
     
@@ -345,7 +436,7 @@ const CollectionScreen = ({ onStartChallenge, onAddToCollection }) => {
 export default CollectionScreen;
 
 
-// --- スタイル定義 (isMobileに依存しないもののみ残す) ---
+// --- CollectionScreen 本体が使うスタイル定義 ---
 
 const titleBoxStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)', 
@@ -415,96 +506,4 @@ const unlockedBadgeStyle = {
     borderRadius: '10px',
     fontSize: '0.8rem',
     fontWeight: 'bold',
-};
-
-// モーダル関連のスタイル (変更なし)
-const modalOverlayStyle = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-};
-
-const modalContentStyle = {
-    backgroundColor: 'white',
-    padding: '30px',
-    borderRadius: '10px',
-    width: '90%',
-    maxWidth: '400px',
-    textAlign: 'center',
-    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
-};
-
-const modalButtonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '20px',
-};
-
-const modalButtonStyle = {
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '5px',
-    color: 'white',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-};
-
-const cardDetailModalContentStyle = {
-    maxWidth: '500px',
-    padding: '20px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-};
-
-const cardDetailHeaderStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: '15px',
-    gap: '10px', 
-};
-
-const cardDetailRarityBadgeStyle = {
-    padding: '5px 10px',
-    borderRadius: '15px',
-    fontSize: '0.8rem',
-    fontWeight: 'bold',
-    color: '#333', 
-};
-
-const cardDetailImageStyle = {
-    width: '150px',
-    height: 'auto',
-    borderRadius: '10px',
-    marginBottom: '15px',
-    border: '2px solid #eee',
-};
-
-const cardDetailDescriptionStyle = {
-    fontSize: '0.95rem',
-    color: '#555',
-    lineHeight: '1.6',
-    marginBottom: '10px',
-    textAlign: 'left', 
-    width: '100%',
-    maxHeight: '150px', 
-    overflowY: 'auto', 
-    padding: '0 10px',
-};
-
-const cardDetailButtonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '20px',
-    width: '100%',
 };
