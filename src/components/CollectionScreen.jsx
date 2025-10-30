@@ -196,7 +196,7 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
         display: 'grid',
         // 🚨 修正箇所: スマホでは4列 (必要に応じて 'repeat(5, 1fr)' に変更も可能)
         gridTemplateColumns: isMobile 
-            ? 'repeat(3, 1fr)' 
+            ? 'repeat(2, 1fr)' 
             : 'repeat(auto-fit, minmax(150px, 1fr))', 
         gap: isMobile ? '10px' : '20px', // スマホでは隙間を小さくしてカードを詰める
         maxWidth: isMobile ? '98%' : '900px', // スマホでは最大幅を増やして左右の余白を減らす
@@ -317,7 +317,7 @@ const CollectionScreen = ({ onStartChallenge, isCardUnlocked, unlockedCards }) =
                         fontWeight: 'bold',
                     };
                     
-                    const nameFontSize = isMobile ? '0.7rem' : '1.1rem'; // スマホで名前も小さく
+                    const nameFontSize = isMobile ? '0.9rem' : '1.1rem'; // スマホで名前も小さく
 
                     return (
                         <div 
@@ -409,7 +409,7 @@ const titleBoxStyle = {
 const subtitleStyle = {
     fontFamily: '"Mochiy Pop One", "Comic Sans MS", cursive, sans-serif',
     fontWeight: 'bold', 
-    fontSize: '1.2rem', 
+    fontSize: '1.1rem', 
     color: '#333', 
     marginBottom: '20px', 
     textShadow: '1px 1px 0 #fff',
