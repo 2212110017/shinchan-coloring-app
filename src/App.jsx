@@ -138,15 +138,11 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
         return (
             <>
                 <h1 style={{ ...titleStyle, color: '#333', fontSize: '2rem' }}>
-                    クリアおめでとう！
+                    クリアおめでとう！（{clearCount} 回目）
                 </h1>
-                
-                <p style={{ fontSize: '1.5rem', color: '#E0002A', fontWeight: 'bold', margin: '15px 0' }}>
-                    🎉 「{character.name}」 🎉
-                </p>
 
-                <p style={{ fontSize: '1.3rem', color: '#555', marginBottom: '10px' }}>
-                    今回のクリアで  合計 {clearCount} 回目  のクリアです！
+                <p style={{ fontSize: '1.8rem', color: '#E0002A', fontWeight: 'bold', margin: '15px 0' }}>
+                     ⚽️ {character.name} ⚽️
                 </p>
 
                 {/* ⭐️ランク表示部分 */}

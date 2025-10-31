@@ -51,6 +51,7 @@ const useIsMobile = (maxWidth = 768) => {
 const UNLOCKED_CARD_DEFAULT_IMAGE = 'assets/cards/locked.png'; 
 const LOCKED_CARD_IMAGE = 'assets/cards/locked.png'; 
 const SHINCHAN_BACKGROUND_IMAGE = 'assets/cards/sinchan_bg.png';// 背景画像パス
+const SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL = 'assets/cards/sinchan_bg_mobile.png';
 
 // レアリティの表示マップとスタイル定義 (変更なし)
 const RARITY_DISPLAY_MAP = {

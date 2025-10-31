@@ -1,4 +1,4 @@
-// src/components/ColoringChallenge.jsx (最終修正版)
+// src/components/ColoringChallenge.jsx (最終修正版 - 背景画像切り替え対応)
 
 import React, { useState, useEffect, useMemo } from "react";
 import { 
@@ -28,13 +28,14 @@ const useIsMobile = (maxWidth = 768) => {
 };
 
 
-// 💡 画像パスの定義 (変更なし)
-const SHINCHAN_BACKGROUND_IMAGE_URL = 'assets/cards/sinchan_bg.png';
+// 💡 画像パスの定義 
+const SHINCHAN_BACKGROUND_IMAGE_URL = 'assets/cards/sinchan_bg.png'; // PC用
+const SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL = 'assets/cards/sinchan_bg_mobile.png'; // スマホ用
 const WOOD_PALETTE_IMAGE_URL = 'assets/cards/wood_texture.jpg'; 
 
-const CLICK_SOUND_PATH = '/assets/sounds/click.mp3'; // 💡 ここにあなたのファイルのパスを設定
-const CLICK_SOUND_PATH_KACHI = '/assets/sounds/click2.mp3'; // 💡 ここにあなたのファイルのパスを設定
-const CLICK_SOUND_PATH_PI = '/assets/sounds/click4.mp3'; // 💡 ここにあなたのファイルのパスを設定
+const CLICK_SOUND_PATH = '/assets/sounds/click.mp3'; 
+const CLICK_SOUND_PATH_KACHI = '/assets/sounds/click2.mp3'; 
+const CLICK_SOUND_PATH_PI = '/assets/sounds/click4.mp3'; 
 
 const playClickSound = () => {
     try {
@@ -185,7 +186,10 @@ const COLOR_NAMES_JAPANESE = {
     dark_pink: "こいぴんく",
     dark_brown: "こいちゃいろ",
     emelald_green: "えめらるどぐりーん",
-    light_red: "こいあか"
+    light_red: "こいあか",
+    dark_green: "こいみどり",
+    light_purple: "うすむらさき",
+    cream: "くりーむいろ"
 };
 
 
@@ -216,8 +220,23 @@ const getColorName = (colorCode) => {
     }
 
     // ----------------------------------------------
-    // 🎯 重要な修正: 画面幅に基づくスタイル定義 (変更なし)
+    // 🎯 重要な修正: 画面幅に基づくスタイル定義 (コンポーネント内)
     // ----------------------------------------------
+    
+    // 🔴 【修正箇所 1】: screenContainerStyleをisMobileが使える場所に移動し、背景を切り替える
+    const screenContainerStyle = {
+        textAlign: 'center',
+        padding: '40px 20px', 
+        minHeight: '100vh',
+        // 💡 条件分岐で背景画像を切り替え
+        backgroundImage: isMobile 
+            ? `url(${SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL})` // スマホ用
+            : `url(${SHINCHAN_BACKGROUND_IMAGE_URL})`,         // PC用
+        backgroundSize: 'cover', 
+        backgroundRepeat: 'no-repeat', 
+        backgroundPosition: 'center top',
+        backgroundAttachment: 'fixed',
+    };
 
     // 塗り絵エリアとパレットを横並びにするコンテナ
     const drawingAreaContainerStyle = {
@@ -245,8 +264,8 @@ const getColorName = (colorCode) => {
         flexDirection: 'column',
         alignItems: 'center',
         flexShrink: 0,
-        // スマホなら0px、PCなら55px
-        marginTop: isMobile ? '0' : '55px', 
+        // パレット位置調整 (PC時のみ0pxで上に揃える)
+        marginTop: isMobile ? '0' : '0px', 
         order: isMobile ? 2 : 'unset', // パレットを常に下/右に
     };
 
@@ -270,7 +289,8 @@ const getColorName = (colorCode) => {
         flexShrink: 0,
     };
     
-    // (他のスタイル定義はそのままJSX下に残します)
+    // ----------------------------------------------
+    // 最終的なJSXのレンダリング
     // ----------------------------------------------
 
 
@@ -279,13 +299,22 @@ const getColorName = (colorCode) => {
             
             {/* 🎯 タイトルエリア */}
             <div style={titleBoxStyle}>
-                <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
-                <h2 style={titleStyle}> 【{characterInfo.name}】 塗り絵ゲットチャレンジ</h2>
+                <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+                <h2 style={titleStyle}> 【{characterInfo.name}】{isMobile && <br />}  塗り絵チャレンジ</h2>
+                
 
-                <p style={currentColorTextStyle}>
+                {/* 🔴 【修正箇所 2】: currentColorTextStyleを展開し、PCの時だけmarginBottomを-20pxに上書き */}
+                <p style={{
+                    ...currentColorTextStyle,
+                }}>
                     現在選択中の色 
-                    {/* 💡 修正箇所：isMobileの時だけ改行を挿入 */}
-                    {isMobile && <br />} 
+                    {isMobile ? (
+                        // スマホ (isMobile = true) の場合：改行
+                        <br />
+                    ) : (
+                        // PC (isMobile = false) の場合：コロンとスペース
+                        '： '
+                    )}
                     <strong style={{ 
                         color: currentColor, 
                         fontSize: "2rem",
@@ -299,7 +328,7 @@ const getColorName = (colorCode) => {
             </div>
             
 
-            {/* 塗り絵エリアとパレットのコンテナ (インラインスタイルに戻す) */}
+            {/* 塗り絵エリアとパレットのコンテナ */}
             <div style={drawingAreaContainerStyle}>
                 
                 {/* 塗り絵エリア */}
@@ -357,7 +386,7 @@ const getColorName = (colorCode) => {
                 </div>
             </div>
 
-            <hr style={{ maxWidth: '800px', margin: '20px auto', borderTop: '1px solid #ccc' }} />
+            <hr style={{ maxWidth: '800px', margin: '10px auto', borderTop: '1px solid #ccc' }} />
 
             {/* ボタンエリア (変更なし) */}
             <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
@@ -409,17 +438,8 @@ export default ColoringChallenge;
 
 
 // --- スタイル定義 (isMobileに依存しないもののみ残す) ---
-
-const screenContainerStyle = {
-    textAlign: 'center',
-    padding: '40px 20px', 
-    minHeight: '100vh',
-    backgroundImage: `url(${SHINCHAN_BACKGROUND_IMAGE_URL})`,
-    backgroundSize: 'cover', 
-    backgroundRepeat: 'no-repeat', 
-    backgroundPosition: 'center top',
-    backgroundAttachment: 'fixed',
-};
+// 🚨 注意: 古い screenContainerStyle の定義は削除されています
+// ----------------------------------------------
 
 const titleBoxStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)', 
@@ -447,6 +467,7 @@ const currentColorTextStyle = {
     fontSize: "1.7rem", 
     color: "#333",
     textShadow: '1px 1px 0 #fff', 
+    // ※ ここは静的な定義のまま (marginBottomはJSX側で上書き)
 };
 
 

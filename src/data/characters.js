@@ -159,16 +159,16 @@ const characters = [
 
   // --- 11. 園長先生 --- 
     {
-    id: 'entyou',
+    id: 'kumityou',
     name: '園長先生',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
     // 🎯 対応するゲームコンポーネント名
-    challengeComponent: 'EntyouColoring', 
+    challengeComponent: 'KumityouColoring', 
     
     lockedImageUrl: 'assets/cards/locked.png', 
-    unlockedImageUrl: 'assets/cards/entyou_card.png', 
+    unlockedImageUrl: 'assets/cards/kumityou_card.png', 
     description: 'ふたば幼稚園の園長先生。見た目はコワモテだけど真面目でとっても優しい。組長じゃないよ、園長だよ。'
   },
 
