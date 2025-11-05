@@ -8,6 +8,7 @@ const characters = [
   {
     id: 'sinchan', // 内部で使用する一意の識別子（ファイル名などと一致させると管理しやすい）
     name: 'しんのすけ',
+    furigana: 'しんのすけ',
     anime: 'クレヨンしんちゃん',
     rarity: 'family', // レアリティを設定しておくと、コレクションの楽しさが増します
     
@@ -26,6 +27,7 @@ const characters = [
   {
     id: 'himawari',
     name: 'ひまわり',
+    furigana: 'ひまわり',
     anime: 'クレヨンしんちゃん',
     rarity: 'family',
     
@@ -41,6 +43,7 @@ const characters = [
   {
     id: 'misae',
     name: '野原みさえ',
+    furigana: 'のはらみさえ',
     anime: 'クレヨンしんちゃん',
     rarity: 'family',
     
@@ -56,6 +59,7 @@ const characters = [
   {
     id: 'hirosi',
     name: '野原ひろし',
+    furigana: 'のはらひろし',
     anime: 'クレヨンしんちゃん',
     rarity: 'family',
     
@@ -71,6 +75,7 @@ const characters = [
   {
     id: 'siro',
     name: 'シロ',
+    furigana: 'しろ',
     anime: 'クレヨンしんちゃん',
     rarity: 'family',
     
@@ -86,6 +91,7 @@ const characters = [
   {
     id: 'musae',
     name: 'むさえ',
+    furigana: 'むさえ',
     anime: 'クレヨンしんちゃん',
     rarity: 'family',
     
@@ -101,6 +107,7 @@ const characters = [
   {
     id: 'kazama',
     name: '風間くん',
+    furigana: 'かざまくん',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -116,6 +123,7 @@ const characters = [
   {
     id: 'nene',
     name: 'ネネちゃん',
+    furigana: 'ねねちゃん',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -131,6 +139,7 @@ const characters = [
   {
     id: 'masao',
     name: 'マサオくん',
+    furigana: 'まさおくん',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -146,6 +155,7 @@ const characters = [
     {
     id: 'bo',
     name: 'ボーちゃん',
+    furigana: 'ぼーちゃん',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -161,12 +171,12 @@ const characters = [
     {
     id: 'kumityou',
     name: '園長先生',
+    furigana: 'えんちょうせんせい',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
     // 🎯 対応するゲームコンポーネント名
     challengeComponent: 'KumityouColoring', 
-    
     lockedImageUrl: 'assets/cards/locked.png', 
     unlockedImageUrl: 'assets/cards/kumityou_card.png', 
     description: 'ふたば幼稚園の園長先生。見た目はコワモテだけど真面目でとっても優しい。組長じゃないよ、園長だよ。'
@@ -176,6 +186,7 @@ const characters = [
     {
     id: 'yosinaga',
     name: 'よしなが先生',
+    furigana: 'よしながせんせい',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -191,6 +202,7 @@ const characters = [
     {
     id: 'matuzaka',
     name: 'まつざか先生',
+    furigana: 'まつざかせんせい',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -206,6 +218,7 @@ const characters = [
     {
     id: 'ageo',
     name: '上尾先生',
+    furigana: 'あげおせんせい',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -221,6 +234,7 @@ const characters = [
     {
     id: 'ai',
     name: 'あいちゃん',
+    furigana: 'あいちゃん',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -236,6 +250,7 @@ const characters = [
     {
     id: 'kuroiso',
     name: '黒磯',
+    furigana: 'くろいそ',
     anime: 'クレヨンしんちゃん',
     rarity: 'kindergarten',
     
@@ -246,6 +261,136 @@ const characters = [
     unlockedImageUrl: 'assets/cards/kuroiso_card.png', 
     description: '酢乙女あいのボディーガード。あいに危険が迫ったときは身を挺して守るプロ中のプロである。'
   },
+
+  // --- 17. ななこ --- 
+    {
+    id: 'nanako',
+    name: 'ななこ',
+    furigana: 'ななこ',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'neighborhood',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'NanakoColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/nanako_card.png', 
+    description: 'しんのすけが大好きな女子大生のお姉さん。ご近所のアパート「メゾン・ド・黒トカゲ」に住んでいる。父はベストセラー作家の大原四十郎。'
+  },
+
+  // --- 18. 隣のおばさん --- 
+    {
+    id: 'obasan',
+    name: '隣のおばさん',
+    furigana: 'となりのおばさん',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'neighborhood',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'ObasanColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/obasan_card.png', 
+    description: '野原家の隣に住んでいる北本さん。ウワサ話が好きでみさえやひろしのことをよくネタにしている。実は英語が話せる。甥っ子はアメリカ人のロベルト。'
+  },
+
+  // --- 19. ミッチー&ヨシりん --- 
+    {
+    id: 'yosimiti',
+    name: 'ミッチー&ヨシりん',
+    furigana: 'みっちーあんどよしりん',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'neighborhood',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'YosimitiColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/yosimiti_card.png', 
+    description: '野原家のご近所に住むラブラブな新婚さん。ハートのTシャツはペアルック。'
+  },
+
+  // --- 20. 四郎 --- 
+    {
+    id: 'yonrou',
+    name: '四郎',
+    furigana: 'よんろう',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'neighborhood',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'YonrouColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/yonrou_card.png', 
+    description: 'またずれ荘の住人。名前の通り四浪しかけたが、現在は東京カスカビアン産業大学に通う大学生。'
+  },
+
+  // --- 21. 埼玉紅さそり隊 --- 
+    {
+    id: 'benisasori',
+    name: '埼玉紅さそり隊',
+    furigana: 'さいたまべにさそりたい',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'neighborhood',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'BenisasoriColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/benisasori_card.png', 
+    description: '高校三年生のスケ番グループ。メンバーはしんのすけに師匠と尊敬されているリーダーのふかづめ竜子、魚の目お銀、ふきでものマリー。登場シーンでは必ずポーズをとる。売られたケンカは絶対に買う。'
+  },
+
+  // --- 22. アクション仮面 --- 
+    {
+    id: 'akusyon',
+    name: 'アクション仮面',
+    furigana: 'あくしょんかめん',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'hero',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'AkusyonColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/akusyon_card.png', 
+    description: 'テレビ番組のヒーロー。勝利のときは手を挙げ、「ワッハハハハハ！」と高らかに笑う。しんのすけの憧れの存在。'
+  },
+
+  // --- 23. 桜ミミ子 --- 
+    {
+    id: 'mimiko',
+    name: '桜ミミ子',
+    furigana: 'さくらみみこ',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'hero',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'MimikoColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/mimiko_card.png', 
+    description: 'アクション仮面のパートナー。セーラー服姿とお団子ヘアが特徴。'
+  },
+
+  // --- 23. ぶりぶりざえもん --- 
+    {
+    id: 'buriburi',
+    name: 'ぶりぶりざえもん',
+    furigana: 'ぶりぶりざえもん',
+    anime: 'クレヨンしんちゃん',
+    rarity: 'hero',
+    
+    // 🎯 対応するゲームコンポーネント名
+    challengeComponent: 'BuriburiColoring', 
+    
+    lockedImageUrl: 'assets/cards/locked.png', 
+    unlockedImageUrl: 'assets/cards/buriburi_card.png', 
+    description: '救いのマラカスを振ると現れるブタのヒーロー。ピンチのときは味方を平気で裏切り、弱そうな相手には強気にでる。紫タイツにちとせあめを装備している。「お助け料１億万円！ローンも可！」'
+  },
+
+
 
 
 

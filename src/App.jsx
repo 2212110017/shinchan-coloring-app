@@ -1,41 +1,39 @@
 // src/App.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import CollectionScreen from './components/CollectionScreen';
 import ColoringChallenge from './components/ColoringChallenge'; 
 
 import characters from './data/characters';
-import { useCollectionStore } from './hooks/useCollectionStore';
+// useCollectionStore の import は削除
+// import { useCollectionStore } from './hooks/useCollectionStore'; 
 
 const APP_BACKGROUND_IMAGE_URL = 'assets/shinchan_bg.png';
 
 // ----------------------------------------------
-// 🏅 ランク定義 (クリア回数と星、色)
+// 🏅 ランク定義 (変更なし)
 // ----------------------------------------------
 const RANK_TIERS = [
-    { clears: 30, stars: 4, color: '#FF1493', name: 'レジェンド' }, // ピンク (100回)
-    { clears: 25, stars: 4, color: '#00B894', name: 'マスター' }, // 緑 (50回)
-    { clears: 20, stars: 4, color: '#FFC107', name: 'ベテラン' }, // 金色 (30回)
+    { clears: 30, stars: 4, color: '#FF1493', name: 'レジェンド' }, 
+    { clears: 25, stars: 4, color: '#00B894', name: 'マスター' }, 
+    { clears: 20, stars: 4, color: '#FFC107', name: 'ベテラン' }, 
     { clears: 15, stars: 3, color: '#FFC107', name: '上級者' },
     { clears: 10, stars: 2, color: '#FFC107', name: '中級者' },
     { clears: 5, stars: 1, color: '#FFC107', name: '初級者' },
 ];
 
-// クリア回数に基づいて現在のランクと次のランクへの情報を計算する関数
+// クリア回数に基づいて現在のランクと次のランクへの情報を計算する関数 (変更なし)
 const getRankInfo = (clearCount) => {
-    // 降順にソートして、現在のランクを見つける
     const sortedTiers = [...RANK_TIERS].sort((a, b) => b.clears - a.clears);
     
     let currentTier = sortedTiers.find(tier => clearCount >= tier.clears) || { clears: 0, stars: 0, color: '#ccc', name: '未到達' };
     
-    // 次のランクを見つける
     const nextTierIndex = sortedTiers.findIndex(tier => tier.clears === currentTier.clears) - 1;
     const nextTier = sortedTiers[nextTierIndex] || null;
 
     const isMaxRank = !nextTier && currentTier.clears > 0;
     const clearsToNext = nextTier ? nextTier.clears - clearCount : 0;
     
-    // 最初のランク（5回）へのカウントダウン
     if (clearCount < 5) {
         currentTier = { clears: 0, stars: 0, color: '#ccc', name: '未到達' };
         return { 
@@ -55,20 +53,18 @@ const getRankInfo = (clearCount) => {
 };
 
 // ----------------------------------------------
-// 🎯 SuccessModal コンポーネントの修正版
+// 🎯 SuccessModal コンポーネント (変更なし)
 // ----------------------------------------------
 const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToCollection, onDiscardAndReturn }) => {
     
     // スタイル定義 (省略)
-    // 🚨 注意: Styleは元のコードに合わせています。
-    
     const modalOverlayStyle = {
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', // 黒背景を濃くする
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', 
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -76,14 +72,14 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
     };
 
     const modalContentStyle = {
-        backgroundColor: '#fffbe0', // カードと同じクリーム色
+        backgroundColor: '#fffbe0', 
         padding: '40px',
         borderRadius: '15px',
         width: '90%',
         maxWidth: '550px',
         textAlign: 'center',
         boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
-        border: '5px solid #FFC107', // ヒーローレアリティの金色
+        border: '5px solid #FFC107', 
         transform: 'scale(1.05)',
         animation: 'bounce-in 0.5s ease-out',
         position: 'relative',
@@ -91,7 +87,7 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
     };
     
     const titleStyle = {
-        color: '#E0002A', // 赤
+        color: '#E0002A', 
         fontSize: '2.5rem',
         fontWeight: '900',
         marginBottom: '20px',
@@ -111,7 +107,7 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
         padding: '12px 30px',
         fontSize: '1.2rem',
         fontWeight: 'bold',
-        backgroundColor: '#4CAF50', // 緑
+        backgroundColor: '#4CAF50', 
         color: 'white',
         border: 'none',
         borderRadius: '8px',
@@ -127,14 +123,10 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
         boxShadow: '4px 4px 0 #999',
     };
     
-    // ------------------------------------------
-    // 周回クリア時の表示 (RankInfoを受け取る)
-    // ------------------------------------------
     const RepeatedClearContent = () => {
         const { current, clearsToNext, isMaxRank } = rankInfo;
         const starEmoji = '★'.repeat(current.stars);
         
-        // 周回クリア時は onComplete（returnToCollection）のみ
         return (
             <>
                 <h1 style={{ ...titleStyle, color: '#333', fontSize: '2rem' }}>
@@ -145,14 +137,12 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
                      ⚽️ {character.name} ⚽️
                 </p>
 
-                {/* ⭐️ランク表示部分 */}
                 <div style={{ margin: '20px 0', padding: '10px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee' }}>
                     <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#333' }}>
                         現在のランク：{current.name}
                     </p>
                     <span style={{ 
                         fontSize: '2.5rem', 
-                        // ランク色を適用
                         color: current.color, 
                         textShadow: '1px 1px 2px rgba(0,0,0,0.3)' 
                     }}>
@@ -161,7 +151,6 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
                     {current.stars < 4 && current.clears > 0 && <p style={{ fontSize: '0.9rem', color: '#888' }}>（{current.clears}回から{current.stars}つ星）</p>}
                 </div>
 
-                {/* 次のランクへのモチベーション */}
                 {isMaxRank ? (
                     <p style={{ fontSize: '1.1rem', color: current.color, fontWeight: 'bold' }}>
                         🎉 MAXランク達成です！素晴らしい！ 🎉
@@ -175,9 +164,8 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
                 )}
 
                 <div style={buttonContainerStyle}>
-                    {/* 周回クリア時は、常に「コレクション画面に戻る」ボタンのみ */}
                     <button 
-                        onClick={onComplete} // returnToCollection を実行
+                        onClick={onComplete} 
                         style={{ ...confirmButtonStyle, backgroundColor: '#4a90e2', boxShadow: '4px 4px 0 #3b73b2' }}
                     >
                         コレクション画面に戻る
@@ -188,9 +176,6 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
     };
 
 
-    // ------------------------------------------
-    // 新規獲得時の表示
-    // ------------------------------------------
     const NewCardContent = () => (
         <>
             <h1 style={titleStyle}>
@@ -207,13 +192,13 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
 
             <div style={buttonContainerStyle}>
                 <button 
-                    onClick={onAddToCollection} // returnToCollection を実行
+                    onClick={onAddToCollection} 
                     style={confirmButtonStyle}
                 >
                     コレクションに追加する
                 </button>
                 <button 
-                    onClick={onDiscardAndReturn} // returnToCollection を実行
+                    onClick={onDiscardAndReturn} 
                     style={discardButtonStyle}
                 >
                     今回は見送る
@@ -221,14 +206,11 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
             </div>
         </>
     );
-    // ------------------------------------------
-
-    // 🎯 新規獲得は、現在のクリア回数が「1回」の場合（今回のクリアで初めてゲット）
+    
     const isNewCard = clearCount === 1;
 
     return (
         <div style={modalOverlayStyle}>
-            {/* モーダルの内容を isNewCard で切り替える */}
             <div style={modalContentStyle}>
                 {isNewCard ? <NewCardContent /> : <RepeatedClearContent />}
             </div>
@@ -240,7 +222,6 @@ const SuccessModal = ({ character, onComplete, clearCount, rankInfo, onAddToColl
 // App コンポーネント本体
 // ----------------------------------------------
 const coloringAppStyle = {
-  // 背景設定
   backgroundImage: `url(${APP_BACKGROUND_IMAGE_URL})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -263,57 +244,128 @@ const collectionAppStyle = {
 };
 
 
+// localStorageからのデータロードとDateオブジェクト変換を行うヘルパー関数
+const loadCollectionFromStorage = () => {
+    const stored = localStorage.getItem('shinchan_collection');
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            Object.keys(parsed).forEach(key => {
+                // unlockedAtが文字列であればDateオブジェクトに変換
+                if (parsed[key].unlockedAt && typeof parsed[key].unlockedAt === 'string') {
+                    // Date.parseが失敗する可能性があるため、try-catchやチェックを強化すべきだが、今回はシンプルに実装
+                    const date = new Date(parsed[key].unlockedAt);
+                    // 🚨 Dateオブジェクトとして有効かチェック
+                    parsed[key].unlockedAt = isNaN(date.getTime()) ? null : date;
+                }
+                if (typeof parsed[key].clears !== 'number') {
+                     parsed[key].clears = 0;
+                }
+            });
+            return parsed;
+        } catch (e) {
+            // エラーログを出力して、データ破損時は空のオブジェクトを返す
+            console.error("Failed to parse collection data from localStorage:", e);
+            return {};
+        }
+    }
+    return {};
+};
+
+
 function App() {
-  // 🏅 修正: getClearCount を取得
-  const { unlockCard, isCardUnlocked, collectionMap, getClearCount } = useCollectionStore(); 
-    
-  const [currentChallengeId, setCurrentChallengeId] = useState(null); 
   
-  // 🏅 State の定義
+  // コレクションデータ管理をAppコンポーネント内に移動
+  const [collectionMap, setCollectionMap] = useState(() => loadCollectionFromStorage());
+  
+  // collectionMapの変更を監視し、localStorageに保存するエフェクト
+  useEffect(() => {
+    // DateオブジェクトはJSON.stringifyでISO 8601形式の文字列に変換される
+    localStorage.setItem('shinchan_collection', JSON.stringify(collectionMap));
+  }, [collectionMap]);
+  
+  
+  // --- コレクション操作のヘルパー関数 ---
+  
+  const isCardUnlocked = useCallback((id) => {
+      return collectionMap[id] && collectionMap[id].clears > 0;
+  }, [collectionMap]);
+  
+  const getClearCount = useCallback((id) => {
+      return collectionMap[id]?.clears || 0;
+  }, [collectionMap]);
+
+  // コレクションの更新ロジック (クリア回数の増加と初回日時の記録)
+  const unlockCard = useCallback((id) => {
+      setCollectionMap(prev => {
+          const isFirstUnlock = !prev[id] || (prev[id]?.clears || 0) === 0;
+          const newCount = (prev[id]?.clears || 0) + 1;
+          
+          return {
+              ...prev,
+              [id]: {
+                  clears: newCount,
+                  // 初めてゲットした場合のみ現在の日時を記録。それ以外は既存の日時を維持。
+                  unlockedAt: isFirstUnlock ? new Date() : (prev[id]?.unlockedAt || null),
+              }
+          };
+      });
+  }, [setCollectionMap]);
+  
+  
+  // --- UI State ---
+  const [currentChallengeId, setCurrentChallengeId] = useState(null); 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [justUnlockedId, setJustUnlockedId] = useState(null); // 一時的にIDを保持
-  const [currentClearCount, setCurrentClearCount] = useState(0); // 🚨 今回のクリア後の回数を保持
+  const [justUnlockedId, setJustUnlockedId] = useState(null); 
+  const [currentClearCount, setCurrentClearCount] = useState(0); 
 
   const challengeCharacter = characters.find(c => c.id === currentChallengeId);
   const unlockedCharacter = characters.find(c => c.id === justUnlockedId);
   
   const returnToCollection = () => {
     setCurrentChallengeId(null);
-    setShowSuccessModal(false); // モーダルも閉じる
+    setShowSuccessModal(false); 
     setJustUnlockedId(null);
-    setCurrentClearCount(0); // 回数をリセット
+    setCurrentClearCount(0); 
   };
-
   
-  // 🏅 チャレンジ完了時に回数をインクリメントし、モーダルを表示する新しいロジック
+  // チャレンジ完了時にモーダルを表示する処理 (保存処理なし)
   const handleChallengeCompleteAndShowModal = (completedId) => {
-      // 1. まず回数をインクリメントし、即座にLocal Storageに保存
-      // 🚨 useCollectionStore の unlockCard は、新しいクリア回数を返します
-      const newCount = unlockCard(completedId); 
+      const currentCount = getClearCount(completedId);
+      const newCount = currentCount + 1; // 今回のクリアで増えるであろう回数
       
-      // 2. モーダルを表示するための状態を更新
-      setCurrentClearCount(newCount); // 🚨 新しい回数をStateに保存
+      setCurrentClearCount(newCount); 
       setJustUnlockedId(completedId);
       setShowSuccessModal(true);
       
-      setCurrentChallengeId(null); // チャレンジ画面を閉じる
+      setCurrentChallengeId(null); 
   };
   
-  // 🎯 SuccessModal に渡すデータの準備
   const rankInfo = getRankInfo(currentClearCount);
 
 
-  // 🏅 モーダルからの「コレクションに追加」処理 (今回は単に戻るだけ)
+  // 🏅 モーダルからの「コレクションに追加」処理 (新規獲得時)
   const handleAddToCollection = () => {
-    // NewCardの判定はモーダル内部で行うが、unlockCardは既に handleChallengeCompleteAndShowModal で完了している
+    if (justUnlockedId) {
+        unlockCard(justUnlockedId); // 初ゲットとして記録
+    }
     returnToCollection(); 
   };
   
-  // 🏅 モーダルからの「今回は見送る」処理 (今回は単に戻るだけ)
+  // 🏅 モーダルからの「今回は見送る」処理 (新規獲得時)
   const handleDiscardAndReturn = () => {
-    // NewCardの判定はモーダル内部で行うが、unlockCardは既に handleChallengeCompleteAndShowModal で完了している
+    returnToCollection(); // 保存せず戻る
+  };
+
+  
+  // 🏅 周回クリア時（2回目以降）に「戻る」ボタンを押したときの処理
+  const handleRepeatClearAndReturn = () => {
+    if (justUnlockedId) {
+        unlockCard(justUnlockedId); // クリア回数を増やす
+    }
     returnToCollection();
   };
+
 
   
   return (
@@ -323,7 +375,6 @@ function App() {
       {currentChallengeId && challengeCharacter && (
         <ColoringChallenge 
             characterId={currentChallengeId}
-            // 🚨 修正: onComplete で新しい処理を呼ぶ
             onComplete={() => handleChallengeCompleteAndShowModal(currentChallengeId)} 
             onCancel={returnToCollection} 
         />
@@ -334,7 +385,6 @@ function App() {
         <CollectionScreen 
           onStartChallenge={setCurrentChallengeId} 
           isCardUnlocked={isCardUnlocked} 
-          // 修正: collectionMap を渡す (回数マップ)
           unlockedCards={collectionMap}
         />
       )}
@@ -343,18 +393,17 @@ function App() {
       {showSuccessModal && unlockedCharacter && (
         <SuccessModal 
           character={unlockedCharacter}
-          clearCount={currentClearCount} // 🚨 今回のクリア後の回数を渡す
-          rankInfo={rankInfo} // 🚨 ランク情報を渡す
+          clearCount={currentClearCount} 
+          rankInfo={rankInfo} 
           
-          // 新規獲得時の「追加」ボタンを押された場合
           onAddToCollection={handleAddToCollection} 
           onDiscardAndReturn={handleDiscardAndReturn} 
-          onComplete={returnToCollection} // 周回クリア時の「戻る」ボタン用
+          
+          onComplete={handleRepeatClearAndReturn} 
         />
       )}
     </div>
   );
 }
 
-// 🚨 この行が main.jsx からの import で必要です
 export default App;

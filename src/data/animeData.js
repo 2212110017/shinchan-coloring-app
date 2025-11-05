@@ -17,6 +17,14 @@ import MatuzakaSvgText from "../assets/matuzaka.svg?raw";
 import AgeoSvgText from "../assets/ageo.svg?raw"; 
 import AiSvgText from "../assets/ai.svg?raw"; 
 import KuroisoSvgText from "../assets/kuroiso.svg?raw"; 
+import NanakoSvgText from "../assets/nanako.svg?raw";  
+import ObasanSvgText from "../assets/obasan.svg?raw"; 
+import YosimitiSvgText from "../assets/yosimiti.svg?raw"; 
+import YonrouSvgText from "../assets/yonrou.svg?raw"; 
+import BenisasoriSvgText from "../assets/benisasori.svg?raw"; 
+import AkusyonSvgText from "../assets/akusyon.svg?raw"; 
+import MimikoSvgText from "../assets/mimiko.svg?raw"; 
+import BuriburiSvgText from "../assets/buriburi.svg?raw"; 
 
 // 塗り絵に使用する色パレット（汎用的に利用するためここで定義）
 export const COLOR_PALETTE = {
@@ -44,7 +52,9 @@ export const COLOR_PALETTE = {
   light_red: "#b81504",
   dark_green: "#016b67",
   light_purple: "#e7d4e7",
-  cream: "#fffade"
+  cream: "#fffade",
+  red_perple: "#6e0040",
+  kind_blue: "#aaaedc"
 };
 
 // ----------------------------------------------------
@@ -474,6 +484,265 @@ const KUROISO_DATA = {
     viewBox: "0 0 210 297",
 };
 
+// 17. ななこくん
+const NANAKO_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#016b67" },
+        { id: "path3", defaultColor: "#fbd4ab"}, 
+        { id: "path14", defaultColor: "#000000" }, 
+        { id: "path15", defaultColor: "#000000" }, 
+        { id: "path16", defaultColor: "#ffffff" }, 
+        { id: "path17", defaultColor: "#ffffff" }, 
+        { id: "path20", defaultColor: "#f4afc2"}, 
+        { id: "path21", defaultColor: "#fbd4ab" }, 
+        { id: "path22", defaultColor: "#fbd4ab" },
+        { id: "path23", defaultColor: "#fbd4ab" }, 
+        { id: "path24", defaultColor: "#fbd4ab" },  
+        { id: "path25", defaultColor: "#fffade" }, 
+        { id: "path26", defaultColor: "#007ac5" }, 
+        { id: "path27", defaultColor: "#007ac5" }
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: NanakoSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 17. おばさん
+const OBASAN_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#462827"},
+        { id: "path13", defaultColor: "#ffffff"}, 
+        { id: "path16", defaultColor: "#b86766"}, 
+        { id: "path17", defaultColor: "#50cab4"}, 
+        { id: "path19", defaultColor: "#8675b4"}, 
+        { id: "path20", defaultColor: "#fbd4ab" }, 
+        { id: "path21", defaultColor: "#fbd4ab" },
+        { id: "path22", defaultColor: "#fbd4ab" }, 
+        { id: "path23", defaultColor: "#fbd4ab" },  
+        { id: "path24", defaultColor: "#fcd385" }, 
+        { id: "path26", defaultColor: "#994f28"}, 
+        { id: "path28", defaultColor: "#994f28" },
+        { id: "path29", defaultColor: "#462827"}, 
+        { id: "path30", defaultColor: "#462827"},
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: ObasanSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 18. ミッチー&ヨシリン
+const YOSIMITI_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#fbd4ab"}, 
+        { id: "path3", defaultColor: "#fbd4ab"}, 
+        { id: "path4", defaultColor: "#fbd4ab"}, 
+        { id: "path5", defaultColor: "#994f28"}, 
+        { id: "path6", defaultColor: "#994f28" },
+        { id: "path11", defaultColor: "#000000"},
+        { id: "path12", defaultColor: "#000000"},
+        { id: "path28", defaultColor: "#000000"},
+        { id: "path29", defaultColor: "#000000"},
+        { id: "path30", defaultColor: "#ffffff"}, 
+        { id: "path33", defaultColor: "#ffffff"}, 
+        { id: "path40", defaultColor: "#a5ce5e"}, 
+        { id: "path41", defaultColor: "#a5ce5e"}, 
+        { id: "path42", defaultColor: "#ea6b8c"}, 
+        { id: "path43", defaultColor: "#ea6b8c"}, 
+        { id: "path44", defaultColor: "#fbd4ab" }, 
+        { id: "path45", defaultColor: "#fbd4ab" },
+        { id: "path46", defaultColor: "#fbd4ab" }, 
+        { id: "path47", defaultColor: "#fbd4ab" },  
+        { id: "path48", defaultColor: "#fffade" }, 
+        { id: "path49", defaultColor: "#007ac5"}, 
+        { id: "path50", defaultColor: "#fbd4ab" },
+        { id: "path51", defaultColor: "#fbd4ab" }, 
+        { id: "path52", defaultColor: "#eaa000"},
+        { id: "path53", defaultColor: "#eaa000"},
+        { id: "path54", defaultColor: "#9ad5f3"},
+        { id: "path55", defaultColor: "#9ad5f3"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: YosimitiSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 19. 四郎
+const YONROU_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#f99d8e"}, 
+        { id: "path2", defaultColor: "#000000"}, 
+        { id: "path3", defaultColor: "#f99d8e"}, 
+        { id: "path4", defaultColor: "#f99d8e"}, 
+        { id: "path5", defaultColor: "#6e0040"}, 
+        { id: "path6", defaultColor: "#ffffff" },
+        { id: "path20", defaultColor: "#016b67"},
+        { id: "path22", defaultColor: "#aaaedc"},
+        { id: "path23", defaultColor: "#f99d8e"},
+        { id: "path24", defaultColor: "#f99d8e"},
+        { id: "path25", defaultColor: "#fcd385"}, 
+        { id: "path26", defaultColor: "#462827"}, 
+        { id: "path27", defaultColor: "#462827"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: YonrouSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 20. 紅さそり隊
+const BENISASORI_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#fbd4ab"}, 
+        { id: "path3", defaultColor: "#fbd4ab"}, 
+        { id: "path67", defaultColor: "#bcc4c7"}, 
+        { id: "path4", defaultColor: "#fbd4ab"}, 
+        { id: "path5", defaultColor: "#fbd4ab"}, 
+        { id: "path6", defaultColor: "#994f28" },
+        { id: "path7", defaultColor: "#b86766" },
+        { id: "path8", defaultColor: "#eaa000" },
+        { id: "path9", defaultColor: "#ffffff" },
+        { id: "path10", defaultColor: "#000000"},
+        { id: "path11", defaultColor: "#000000"},
+        { id: "path12", defaultColor: "#000000"},
+        { id: "path14", defaultColor: "#ffffff"}, 
+        { id: "path15", defaultColor: "#ffffff"}, 
+        { id: "path16", defaultColor: "#f99d8e"},
+        { id: "path17", defaultColor: "#b86766" },
+        { id: "path18", defaultColor: "#b86766" },
+        { id: "path53", defaultColor: "#ffffff"}, 
+        { id: "path64", defaultColor: "#bcc4c7"}, 
+        { id: "path61", defaultColor: "#fbd4ab" }, 
+        { id: "path62", defaultColor: "#fbd4ab" },
+        { id: "path66", defaultColor: "#bcc4c7"}, 
+        { id: "path68", defaultColor: "#bcc4c7"},
+        { id: "path72", defaultColor: "#bcc4c7"},
+        { id: "path73", defaultColor: "#bcc4c7"},
+        { id: "path74", defaultColor: "#fbd4ab" }, 
+        { id: "path76", defaultColor: "#fbd4ab" }, 
+        { id: "path77", defaultColor: "#fbd4ab" },
+        { id: "path78", defaultColor: "#024178"},
+        { id: "path79", defaultColor: "#024178"},
+        { id: "path80", defaultColor: "#024178"},
+        { id: "path82", defaultColor: "#024178"},
+        { id: "path83", defaultColor: "#024178"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: BenisasoriSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 21. アクション仮面
+const AKUSYON_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#fbd4ab"}, 
+        { id: "path3", defaultColor: "#b86766"}, 
+        { id: "path15", defaultColor: "#ffffff" },
+        { id: "path6", defaultColor: "#007ac5"},
+        { id: "path7", defaultColor: "#ff0000"},
+        { id: "path9", defaultColor: "#ffff00"},
+        { id: "path10", defaultColor: "#009758"},
+        { id: "path12", defaultColor: "#ffffff" },
+        { id: "path13", defaultColor: "#007ac5"},
+        { id: "path14", defaultColor: "#ffffff" },
+        { id: "path16", defaultColor: "#ffffff" },
+        { id: "path17", defaultColor: "#ff0000"},
+        { id: "path21", defaultColor: "#007ac5"},
+        { id: "path23", defaultColor: "#007ac5"},
+        { id: "path24", defaultColor: "#ffffff" },
+        { id: "path25", defaultColor: "#ff0000"},
+        { id: "path28", defaultColor: "#ffffff" },
+        { id: "path29", defaultColor: "#ffff00"},
+        { id: "path33", defaultColor: "#009758"},
+        { id: "path37", defaultColor: "#ff0000"},
+        { id: "path35", defaultColor: "#007ac5"},
+        { id: "path36", defaultColor: "#007ac5"},
+        { id: "path38", defaultColor: "#ffffff" },
+        { id: "path39", defaultColor: "#ffffff" },
+        { id: "path40", defaultColor: "#ff0000"},
+        { id: "path41", defaultColor: "#ff0000"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: AkusyonSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 21. ミミ子くん
+const MIMIKO_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path7", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#6e0040"}, 
+        { id: "path3", defaultColor: "#6e0040"}, 
+        { id: "path6", defaultColor: "#6e0040"}, 
+        { id: "path8", defaultColor: "#000000"},
+        { id: "path9", defaultColor: "#000000"},
+        { id: "path10", defaultColor: "#ffffff"}, 
+        { id: "path11", defaultColor: "#ffffff"}, 
+        { id: "path23", defaultColor: "#ffffff" },
+        { id: "path19", defaultColor: "#ffffff" },
+        { id: "path22", defaultColor: "#f4afc2"},
+        { id: "path24", defaultColor: "#ffffff" },
+        { id: "path27", defaultColor: "#009758"},
+        { id: "path31", defaultColor: "#f4afc2"},
+        { id: "path32", defaultColor: "#fbd4ab"},
+        { id: "path33", defaultColor: "#fbd4ab"},
+        { id: "path36", defaultColor: "#fbd4ab"},
+        { id: "path37", defaultColor: "#fbd4ab"},
+        { id: "path38", defaultColor: "#ffffff" },
+        { id: "path39", defaultColor: "#ffffff" },
+        { id: "path40", defaultColor: "#ea6b8c"},
+        { id: "path41", defaultColor: "#ea6b8c"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: MimikoSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
+// 22. ぶりぶりざえもん
+const BURIBURI_DATA = {
+    // 🎨 塗り絵のパーツと正解色を定義
+    parts: [
+        { id: "path1", defaultColor: "#fbd4ab"}, 
+        { id: "path2", defaultColor: "#000000"}, 
+        { id: "path3", defaultColor: "#000000"}, 
+        { id: "path4", defaultColor: "#000000"},
+        { id: "path5", defaultColor: "#000000"},
+        { id: "path6", defaultColor: "#fbd4ab"}, 
+        { id: "path7", defaultColor: "#994f28"}, 
+        { id: "path8", defaultColor: "#994f28"},
+        { id: "path9", defaultColor: "#fbd4ab"},
+        { id: "path10", defaultColor: "#8675b4"},
+        { id: "path11", defaultColor: "#ffffff" },
+        { id: "path12", defaultColor: "#ffffff"},
+        { id: "path13", defaultColor: "#ffff00"},
+        { id: "path14", defaultColor: "#ff0000"},
+        { id: "path15", defaultColor: "#ffff00"},
+        { id: "path16", defaultColor: "#f4afc2"}
+    ],
+    // 🖼️ SVGファイルの生テキスト
+    svgText: BuriburiSvgText,
+    // 🔍 SVGの viewBox (みさえのものに合わせる)
+    viewBox: "0 0 210 297",
+};
+
 /**
  * skin: "#fbd4ab", 
   black: "#000000",
@@ -499,7 +768,9 @@ const KUROISO_DATA = {
   light_red: "#b81504",
   dark_green: "#016b67",
   light_purple: "#e7d4e7"
-  cream: "#fffade"
+  cream: "#fffade",
+  red_perple: "#6e0040",
+  light_purple: "#aaaedc"
  */
 
 
@@ -521,6 +792,14 @@ export const CHALLENGE_DATA_MAP = {
     'ageo': AGEO_DATA,
     'ai': AI_DATA,
     'kuroiso': KUROISO_DATA,
+    'nanako': NANAKO_DATA,
+    'obasan': OBASAN_DATA,
+    'yosimiti': YOSIMITI_DATA,
+    'yonrou': YONROU_DATA,
+    'benisasori': BENISASORI_DATA,
+    'akusyon': AKUSYON_DATA,
+    'mimiko': MIMIKO_DATA,
+    'buriburi': BURIBURI_DATA
 };
 
 

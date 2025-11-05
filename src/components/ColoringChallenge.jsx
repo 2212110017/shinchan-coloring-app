@@ -1,4 +1,4 @@
-// src/components/ColoringChallenge.jsx (最終修正版 - 背景画像切り替え対応)
+// src/components/ColoringChallenge.jsx (Undo機能追加版)
 
 import React, { useState, useEffect, useMemo } from "react";
 import { 
@@ -33,9 +33,12 @@ const SHINCHAN_BACKGROUND_IMAGE_URL = 'assets/cards/sinchan_bg.png'; // PC用
 const SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL = 'assets/cards/sinchan_bg_mobile.png'; // スマホ用
 const WOOD_PALETTE_IMAGE_URL = 'assets/cards/wood_texture.jpg'; 
 
+// 💡 成功音、クリック音、失敗音のパス
 const CLICK_SOUND_PATH = '/assets/sounds/click.mp3'; 
 const CLICK_SOUND_PATH_KACHI = '/assets/sounds/click2.mp3'; 
 const CLICK_SOUND_PATH_PI = '/assets/sounds/click4.mp3'; 
+const SUCCESS_SOUND_PATH = '/assets/sounds/success.mp3';
+const BAD_SOUND_PATH = '/assets/sounds/bad.mp3'; 
 
 const playClickSound = () => {
     try {
@@ -67,14 +70,34 @@ const playClickSound_pi = () => {
     }
 };
 
+const playSuccessSound = () => {
+    try {
+        const audio = new Audio(SUCCESS_SOUND_PATH);
+        audio.volume = 0.7; 
+        audio.play().catch(e => console.log("Audio playback failed:", e));
+    } catch (error) {
+        console.error("Error loading or playing success sound:", error);
+    }
+};
+
+const playBadSound = () => {
+    try {
+        const audio = new Audio(BAD_SOUND_PATH);
+        audio.volume = 0.7; 
+        audio.play().catch(e => console.log("Audio playback failed:", e));
+    } catch (error) {
+        console.error("Error loading or playing bad sound:", error);
+    }
+};
+
 // ----------------------------------------------
 // コンポーネント本体
 // ----------------------------------------------
 const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
     
-    const isMobile = useIsMobile(); // 画面サイズを監視
+    const isMobile = useIsMobile(); 
 
-    // 1. 必要なデータと初期値を useMemo で計算 (変更なし)
+    // 1. 必要なデータと初期値を useMemo で計算
     const challengeData = CHALLENGE_DATA_MAP[characterId];
     const characterInfo = characters.find(c => c.id === characterId);
 
@@ -94,17 +117,27 @@ const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
     }, [characterId, CHAR_PARTS]);
 
 
-    // 2. State の定義 (変更なし)
+    // 2. State の定義 
     const [SVG_PATHS, setSVG_PATHS] = useState([]); 
     const [isLoading, setIsLoading] = useState(true);
     const [colors, setColors] = useState(initialColors);
     const [currentColor, setCurrentColor] = useState(COLOR_PALETTE.yellow); 
+    const [feedbackMessage, setFeedbackMessage] = useState(''); 
+    const [showSuccessEffect, setShowSuccessEffect] = useState(false); 
+    const [showBadEffect, setShowBadEffect] = useState(false); 
+    // 🎯 新規 State: 履歴を保存する配列
+    const [history, setHistory] = useState([]);
 
-    
-    // 3. マウント時（または characterId 変更時）に SVG をパース (変更なし)
+
+    // 3. マウント時（または characterId 変更時）に SVG をパース
     useEffect(() => {
         setIsLoading(true);
         setColors(initialColors);
+        // 🎯 履歴をリセット
+        setHistory([]); 
+        setFeedbackMessage(''); 
+        setShowSuccessEffect(false);
+        setShowBadEffect(false);
         
         try {
             const paths = extractPathData(challengeData.svgText);
@@ -117,54 +150,102 @@ const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
     }, [characterId, challengeData.svgText, initialColors]); 
 
     
-    // 4. パーツをクリックして色を塗る関数 (変更なし)
+    // 4. パーツをクリックして色を塗る関数 (履歴追加ロジックを含む)
     const handlePartClick = (partId) => {
         if (!CHAR_PARTS.some(p => p.id === partId)) {
             console.warn(`Part ID ${partId} is not defined in CHAR_PARTS.`);
             return;
         }
 
+        // 🎯 履歴に現在の状態を追加 (直前の状態)
+        setHistory(prevHistory => [...prevHistory, colors]); 
+        
+        // 新しい色の状態を設定
         setColors((prev) => ({
             ...prev,
             [partId]: currentColor, 
         }));
+        
+        setFeedbackMessage(''); 
+        setShowBadEffect(false); 
+    };
+    
+    // 🎯 新規関数: 一つ前に戻る (Undo) 機能
+    const handleUndo = () => {
+        if (history.length > 0) {
+            playClickSound(); // クリック音を鳴らす
+            
+            // 履歴の最後の要素（直前の状態）を取得
+            const previousColors = history[history.length - 1];
+            
+            // 履歴から最後の要素を削除
+            setHistory(prevHistory => prevHistory.slice(0, -1));
+            
+            // 色の状態を戻す
+            setColors(previousColors);
+            
+            setFeedbackMessage('一つ前の操作に戻ったよ！');
+            setShowBadEffect(false);
+        } else {
+            setFeedbackMessage('これ以上戻れません。');
+        }
     };
 
-    // 5. 塗り絵の採点ロジック (変更なし)
+
+    // 5. 塗り絵の採点ロジック
     const handleComplete = () => {
+        
+        if (showSuccessEffect || showBadEffect) return;
+
         const correctColors = CHAR_PARTS.reduce((acc, part) => {
             acc[part.id] = part.defaultColor;
             return acc;
         }, {});
 
-        let correctCount = 0;
-        const totalParts = CHAR_PARTS.length;
+        let wrongPartsCount = 0;
+        const newColors = { ...colors }; 
+        
+        // 🎯 採点する前の状態を履歴に保存 (間違った色を白に戻す前の状態)
+        setHistory(prevHistory => [...prevHistory, colors]);
 
         CHAR_PARTS.forEach(part => {
             const currentPartColor = colors[part.id];
             const correctPartColor = correctColors[part.id];
 
-            if (currentPartColor === correctPartColor) {
-                correctCount++;
+            if (currentPartColor !== correctPartColor) {
+                wrongPartsCount++;
+                newColors[part.id] = COLOR_PALETTE.white;
             }
         });
 
-        const score = (correctCount / totalParts) * 100;
-
-        if (score === 100) {
-            if (onComplete) { 
-                onComplete(); 
-            } else {
-                alert(`🎉 満点です！`);
-            }
+        if (wrongPartsCount === 0) {
+            
+            playSuccessSound(); 
+            setFeedbackMessage('🎉 満点クリア！やったね！ 🎉'); 
+            setShowSuccessEffect(true);
+            
+            setTimeout(() => {
+                setShowSuccessEffect(false); 
+                if (onComplete) { 
+                    onComplete(); 
+                }
+            }, 1500); 
+            
         } else {
-            alert(`残念！正解率 ${score.toFixed(0)}% です。もう一度挑戦してみよう！`);
+            
+            playBadSound();
+            setColors(newColors); 
+            setFeedbackMessage(`残念！あと ${wrongPartsCount} ヶ所違います。もう一度塗り直してみよう！`);
+            
+            setShowBadEffect(true);
+            setTimeout(() => {
+                setShowBadEffect(false);
+            }, 500); 
         }
     };
     
 
 const COLOR_NAMES_JAPANESE = {
-    // ... (変更なし)
     skin: "うすだいたい", 
     black: "くろいろ",
     red: "あかいろ",
@@ -182,31 +263,29 @@ const COLOR_NAMES_JAPANESE = {
     beige: "べーじゅ",
     dark_blue: "こんいろ",
     burn_skin: "やけどしただいたい",
-    dark_red: "あかむらさき",
+    dark_red: "くすんだあか",
     dark_pink: "こいぴんく",
     dark_brown: "こいちゃいろ",
     emelald_green: "えめらるどぐりーん",
     light_red: "こいあか",
     dark_green: "こいみどり",
     light_purple: "うすむらさき",
-    cream: "くりーむいろ"
+    cream: "くりーむいろ",
+    red_perple: "あかむらさき",
+    kind_blue: "やさしいあお"
 };
 
 
-    // カラーコードから色の名前を取得する関数 (変更なし)
+    // カラーコードから色の名前を取得する関数
 const getColorName = (colorCode) => {
-    // 1. カラーコードから英語の色名（キー）を探す
     const entries = Object.entries(COLOR_PALETTE);
     const foundEntry = entries.find(([name, code]) => code === colorCode);
 
     if (foundEntry) {
-        const englishName = foundEntry[0]; // 例: 'red'
-        
-        // 2. 英語名を日本語名に変換する
-        return COLOR_NAMES_JAPANESE[englishName] || englishName; // マップにない場合は英語名をそのまま返す
+        const englishName = foundEntry[0]; 
+        return COLOR_NAMES_JAPANESE[englishName] || englishName; 
     }
     
-    // マップにないカラーコードの場合は、そのままコードを返す
     return colorCode; 
 };
 
@@ -220,56 +299,63 @@ const getColorName = (colorCode) => {
     }
 
     // ----------------------------------------------
-    // 🎯 重要な修正: 画面幅に基づくスタイル定義 (コンポーネント内)
+    // 🎯 SVGスタイル
     // ----------------------------------------------
-    
-    // 🔴 【修正箇所 1】: screenContainerStyleをisMobileが使える場所に移動し、背景を切り替える
+    const svgStyle = {
+        width: "100%", 
+        height: "auto", 
+        border: showSuccessEffect ? "6px solid #FFD700" : (showBadEffect ? "4px solid #E0002A" : "3px solid black"), 
+        boxShadow: showSuccessEffect 
+            ? '0 0 30px #FFD700, 5px 5px 0 #333' 
+            : (showBadEffect ? '0 0 15px #E0002A, 5px 5px 0 #333' : '5px 5px 0 #333'), 
+        transform: showSuccessEffect ? 'scale(1.02)' : 'scale(1)', 
+        transition: 'all 0.3s ease-in-out', 
+        backgroundColor: 'white', 
+    };
+
+
     const screenContainerStyle = {
         textAlign: 'center',
         padding: '40px 20px', 
         minHeight: '100vh',
-        // 💡 条件分岐で背景画像を切り替え
+        backgroundColor: showBadEffect ? 'rgba(255, 192, 203, 0.5)' : 'transparent',
         backgroundImage: isMobile 
-            ? `url(${SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL})` // スマホ用
-            : `url(${SHINCHAN_BACKGROUND_IMAGE_URL})`,         // PC用
+            ? `url(${SHINCHAN_BACKGROUND_IMAGE_MOBILE_URL})` 
+            : `url(${SHINCHAN_BACKGROUND_IMAGE_URL})`,         
         backgroundSize: 'cover', 
         backgroundRepeat: 'no-repeat', 
         backgroundPosition: 'center top',
         backgroundAttachment: 'fixed',
+        transition: 'background-color 0.5s', 
     };
 
-    // 塗り絵エリアとパレットを横並びにするコンテナ
     const drawingAreaContainerStyle = {
         display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row', // スマホなら縦、PCなら横
+        flexDirection: isMobile ? 'column' : 'row', 
         justifyContent: 'center', 
-        alignItems: isMobile ? 'center' : 'flex-start', // スマホなら中央、PCなら上
+        alignItems: isMobile ? 'center' : 'flex-start', 
         maxWidth: '800px', 
         width: '90%', 
         margin: '20px auto', 
         gap: isMobile ? '40px' : '20px', 
     };
 
-    // SVGコンテナ
     const svgContainerStyle = {
-        width: isMobile ? '90%' : '400px', // スマホなら90%、PCなら400px
-        maxWidth: '400px', // スマホでも最大幅は維持
+        width: isMobile ? '90%' : '400px', 
+        maxWidth: '400px', 
         flexShrink: 0,
-        order: isMobile ? 1 : 'unset', // SVGを常に上/左に
+        order: isMobile ? 1 : 'unset', 
     };
 
-    // カラーパレットグループ
     const paletteGroupStyle = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         flexShrink: 0,
-        // パレット位置調整 (PC時のみ0pxで上に揃える)
         marginTop: isMobile ? '0' : '0px', 
-        order: isMobile ? 2 : 'unset', // パレットを常に下/右に
+        order: isMobile ? 2 : 'unset', 
     };
 
-    // カラーパレット本体
     const colorPaletteWrapperStyle = {
         backgroundImage: `url(${WOOD_PALETTE_IMAGE_URL})`,
         backgroundSize: 'cover',
@@ -279,7 +365,6 @@ const getColorName = (colorCode) => {
         justifyContent: 'center', 
         alignContent: 'center', 
         gap: '10px', 
-        // スマホなら300px、PCなら390px
         width: isMobile ? '300px' : '390px', 
         height: isMobile ? 'auto' : '230px', 
         padding: '10px',
@@ -293,7 +378,6 @@ const getColorName = (colorCode) => {
     // 最終的なJSXのレンダリング
     // ----------------------------------------------
 
-
     return (
         <div className="coloring-challenge-container" style={screenContainerStyle}>
             
@@ -303,27 +387,30 @@ const getColorName = (colorCode) => {
                 <h2 style={titleStyle}> 【{characterInfo.name}】{isMobile && <br />}  塗り絵チャレンジ</h2>
                 
 
-                {/* 🔴 【修正箇所 2】: currentColorTextStyleを展開し、PCの時だけmarginBottomを-20pxに上書き */}
                 <p style={{
                     ...currentColorTextStyle,
                 }}>
                     現在選択中の色 
                     {isMobile ? (
-                        // スマホ (isMobile = true) の場合：改行
                         <br />
                     ) : (
-                        // PC (isMobile = false) の場合：コロンとスペース
                         '： '
                     )}
                     <strong style={{ 
                         color: currentColor, 
-                        fontSize: "2rem",
+                        fontSize: "1.6rem",
                         fontFamily: '"M PLUS Rounded 1c", "Mochiy Pop One", "Comic Sans MS", cursive, sans-serif',
                         textShadow: '1px 1px 2px #333, -1px -1px 2px #333' 
                     }}>
                         {getColorName(currentColor)}
                     </strong>
                 </p>
+                {/* 🎯 フィードバックメッセージ表示エリア */}
+                {feedbackMessage && (
+                    <p style={feedbackMessageStyle}>
+                        {feedbackMessage}
+                    </p>
+                )}
             </div>
             </div>
             
@@ -336,18 +423,23 @@ const getColorName = (colorCode) => {
                     <svg
                         viewBox={challengeData.viewBox || "0 0 210 297"}
                         xmlns="http://www.w3.org/2000/svg"
-                        style={{ width: "100%", height: "auto", border: "3px solid black", boxShadow: '5px 5px 0 #333', backgroundColor: 'white' }}
+                        style={svgStyle}
                     >
                         {SVG_PATHS.map((path) => (
                             <path
                                 key={path.id}
                                 id={path.id}
                                 d={path.d}
-                                stroke="black"
+                                // 🌟🌟 修正箇所：キャラクターIDとパスIDの二重チェック 🌟🌟
+                    stroke={
+                        characterId === 'yonrou' && path.id === 'path49'
+                            ? 'white'     // yonrouのpath49なら「白」
+                            : 'black'     // それ以外は「黒」
+                    }
                                 strokeWidth="1.665"
                                 fill={colors[path.id] || COLOR_PALETTE.white}
                                 onClick={() => {
-                                    playClickSound_kachi(); // 🔊 クリック音を鳴らす
+                                    playClickSound_kachi(); 
                                     handlePartClick(path.id);
                                 }}
                                 title={CHAR_PARTS.find(p => p.id === path.id)?.label || path.id}
@@ -370,7 +462,7 @@ const getColorName = (colorCode) => {
                             <button
                                 key={name}
                                 onClick={() => {
-                                    playClickSound_pi(); // 🔊 クリック音を鳴らす
+                                    playClickSound_pi(); 
                                     setCurrentColor(colorCode);
                                 }}
                                 style={{
@@ -388,29 +480,56 @@ const getColorName = (colorCode) => {
 
             <hr style={{ maxWidth: '800px', margin: '10px auto', borderTop: '1px solid #ccc' }} />
 
-            {/* ボタンエリア (変更なし) */}
+            {/* ボタンエリア */}
             <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+                {/* 🎯 Undoボタン */}
                 <button
-                    onClick={handleComplete}
+                    onClick={handleUndo}
+                    disabled={showSuccessEffect || showBadEffect || history.length === 0} 
                     style={{
                         padding: "10px 20px",
                         fontSize: "1.2rem",
-                        backgroundColor: "#4CAF50",
+                        backgroundColor: "#87CEFA", // スカイブルー系の色
                         color: "white",
                         border: "none",
                         borderRadius: "5px",
                         marginTop: "10px",
-                        cursor: "pointer",
+                        marginRight: "10px",
+                        cursor: (showSuccessEffect || showBadEffect || history.length === 0) ? "default" : "pointer",
                         fontWeight: 'bold',
-                        boxShadow: '3px 3px 0 #38761d',
+                        boxShadow: '3px 3px 0 #4682B4',
                     }}
                 >
-                    これで完成！
+                    ↩️ ひとつ戻る
+                </button>
+
+                <button
+                    onClick={handleComplete}
+                    disabled={showSuccessEffect || showBadEffect} 
+                    style={{
+                        padding: "10px 20px",
+                        fontSize: "1.2rem",
+                        backgroundColor: showSuccessEffect ? "#FFD700" : (showBadEffect ? "#E0002A" : "#4CAF50"), 
+                        color: showSuccessEffect ? "#333" : "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        marginTop: "10px",
+                        cursor: (showSuccessEffect || showBadEffect) ? "default" : "pointer",
+                        fontWeight: 'bold',
+                        boxShadow: showSuccessEffect ? '3px 3px 0 #B8860B' : (showBadEffect ? '3px 3px 0 #A0001D' : '3px 3px 0 #38761d'),
+                    }}
+                >
+                    {showSuccessEffect 
+                        ? '✨ 満点！ ✨' 
+                        : (showBadEffect ? '❌ 違ったよ！ ❌' : 'これで完成！')}
                 </button>
                 
                 {onCancel && (
                     <button
-                        onClick={onCancel}
+                        onClick={(e) => {
+                            e.stopPropagation(); 
+                            onCancel(); 
+                        }}
                         style={{
                             padding: "10px 20px",
                             fontSize: "1.2rem",
@@ -437,10 +556,7 @@ const getColorName = (colorCode) => {
 export default ColoringChallenge;
 
 
-// --- スタイル定義 (isMobileに依存しないもののみ残す) ---
-// 🚨 注意: 古い screenContainerStyle の定義は削除されています
-// ----------------------------------------------
-
+// --- スタイル定義 (変更なし) ---
 const titleBoxStyle = {
     backgroundColor: 'rgba(255, 255, 255, 0.9)', 
     padding: '1px 20px',
@@ -453,7 +569,7 @@ const titleBoxStyle = {
 
 const titleStyle = {
     color: 'black', 
-    fontSize: '2.3rem', 
+    fontSize: '1.6rem', 
     fontWeight: 'bold', 
     letterSpacing: '5px', 
     marginBottom: '30px', 
@@ -464,10 +580,21 @@ const titleStyle = {
 const currentColorTextStyle = { 
     marginTop: "10px", 
     fontWeight: "bold",
-    fontSize: "1.7rem", 
+    fontSize: "1.3rem", 
     color: "#333",
     textShadow: '1px 1px 0 #fff', 
-    // ※ ここは静的な定義のまま (marginBottomはJSX側で上書き)
+};
+
+const feedbackMessageStyle = {
+    fontFamily: '"Mochiy Pop One", sans-serif',
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#E0002A', 
+    marginTop: '15px',
+    padding: '5px 10px',
+    border: '2px solid #E0002A',
+    borderRadius: '5px',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
 };
 
 
