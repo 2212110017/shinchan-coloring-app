@@ -1,5 +1,3 @@
-// src/components/ColoringChallenge.jsx (Undo機能追加版)
-
 import React, { useState, useEffect, useMemo } from "react";
 import { 
     CHALLENGE_DATA_MAP, 
@@ -91,6 +89,77 @@ const playBadSound = () => {
 };
 
 // ----------------------------------------------
+// 💡 ヒント用モーダルコンポーネント
+// ----------------------------------------------
+const HintModal = ({ imageUrl, characterName, onClose }) => {
+    
+    // モーダル共通スタイル
+    const modalOverlayStyle = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2000,
+    };
+
+    const modalContentStyle = {
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '10px',
+        width: '90%',
+        maxWidth: '500px',
+        textAlign: 'center',
+        boxShadow: '0 5px 25px rgba(0, 0, 0, 0.5)',
+    };
+    
+    const imageStyle = {
+        maxWidth: '100%',
+        height: 'auto',
+        borderRadius: '8px',
+        border: '4px solid #4CAF50',
+    };
+    
+    const closeButtonStyle = {
+        padding: '10px 20px',
+        border: 'none',
+        borderRadius: '5px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        fontSize: '1rem',
+        marginTop: '20px',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        boxShadow: '3px 3px 0 #38761d',
+    };
+    
+    return (
+        <div style={modalOverlayStyle} onClick={onClose}>
+            <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+                <h3 style={{ color: '#333', marginBottom: '15px' }}>
+                    {characterName} の完成イメージ
+                </h3>
+                <img 
+                    src={imageUrl} 
+                    alt={`${characterName} 完成イメージ`} 
+                    style={imageStyle} 
+                />
+                <button 
+                    onClick={onClose} 
+                    style={closeButtonStyle}
+                >
+                    閉じる (塗り絵に戻る)
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// ----------------------------------------------
 // コンポーネント本体
 // ----------------------------------------------
 const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
@@ -125,19 +194,22 @@ const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
     const [feedbackMessage, setFeedbackMessage] = useState(''); 
     const [showSuccessEffect, setShowSuccessEffect] = useState(false); 
     const [showBadEffect, setShowBadEffect] = useState(false); 
-    // 🎯 新規 State: 履歴を保存する配列
+    // 🎯 履歴を保存する配列
     const [history, setHistory] = useState([]);
+    // 🎯 新規 State: ヒントモーダルの表示/非表示
+    const [showHint, setShowHint] = useState(false);
 
 
     // 3. マウント時（または characterId 変更時）に SVG をパース
     useEffect(() => {
         setIsLoading(true);
         setColors(initialColors);
-        // 🎯 履歴をリセット
+        // 履歴をリセット
         setHistory([]); 
         setFeedbackMessage(''); 
         setShowSuccessEffect(false);
         setShowBadEffect(false);
+        setShowHint(false); // ヒント表示もリセット
         
         try {
             const paths = extractPathData(challengeData.svgText);
@@ -157,7 +229,7 @@ const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
             return;
         }
 
-        // 🎯 履歴に現在の状態を追加 (直前の状態)
+        // 履歴に現在の状態を追加 (直前の状態)
         setHistory(prevHistory => [...prevHistory, colors]); 
         
         // 新しい色の状態を設定
@@ -205,7 +277,7 @@ const ColoringChallenge = ({ characterId, onComplete, onCancel }) => {
         let wrongPartsCount = 0;
         const newColors = { ...colors }; 
         
-        // 🎯 採点する前の状態を履歴に保存 (間違った色を白に戻す前の状態)
+        // 採点する前の状態を履歴に保存 (間違った色を白に戻す前の状態)
         setHistory(prevHistory => [...prevHistory, colors]);
 
         CHAR_PARTS.forEach(part => {
@@ -482,6 +554,31 @@ const getColorName = (colorCode) => {
 
             {/* ボタンエリア */}
             <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
+                
+                {/* 🎨 ヒントを見るボタン (新規追加) */}
+                <button
+                    onClick={() => {
+                        playClickSound();
+                        setShowHint(true);
+                    }}
+                    disabled={showSuccessEffect || showBadEffect || showHint}
+                    style={{
+                        padding: "10px 20px",
+                        fontSize: "1.2rem",
+                        backgroundColor: "#FFD700", // ゴールド系の色
+                        color: "#333",
+                        border: "none",
+                        borderRadius: "5px",
+                        marginTop: "10px",
+                        marginRight: "10px",
+                        cursor: (showSuccessEffect || showBadEffect || showHint) ? "default" : "pointer",
+                        fontWeight: 'bold',
+                        boxShadow: '3px 3px 0 #B8860B',
+                    }}
+                >
+                    🎨 ヒントを見る
+                </button>
+                
                 {/* 🎯 Undoボタン */}
                 <button
                     onClick={handleUndo}
@@ -548,6 +645,15 @@ const getColorName = (colorCode) => {
                     </button>
                 )}
             </div>
+            
+            {/* 💡 ヒントモーダルのレンダリング */}
+            {showHint && (
+                <HintModal
+                    imageUrl={characterInfo.unlockedImageUrl} 
+                    characterName={characterInfo.name}
+                    onClose={() => setShowHint(false)}
+                />
+            )}
 
         </div>
     );
